@@ -1,0 +1,72 @@
+body.theme-7days {
+    --widget-bg: #1a0a0a;
+    --widget-border: #8b0000;
+    --widget-shadow: 0 0 20px rgba(139, 0, 0, 0.4), inset 0 0 20px rgba(139, 0, 0, 0.1);
+    --widget-gradient: linear-gradient(135deg, rgba(139, 0, 0, 0.15) 0%, transparent 100%);
+
+    --title-color: #ff6666;
+    --artist-color: #cc3333;
+    --time-color: #993333;
+
+    --artwork-border: #8b0000;
+    --artwork-border-radius: 6px;
+
+    --progress-bg: #2a0a0a;
+    --progress-fill: #cc3333;
+
+    --icon-bg: #8b0000;
+    --icon-border: #1a0a0a;
+    --icon-color: #ff6666;
+
+    --glow-color: rgba(204, 51, 51, 0.8);
+}
+
+body.theme-7days .widget {
+    border-width: 3px;
+    position: relative;
+}
+
+body.theme-7days .widget::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(ellipse at 10% 20%, rgba(139, 0, 0, 0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 80%, rgba(139, 0, 0, 0.15) 0%, transparent 50%);
+    pointer-events: none;
+    border-radius: var(--border-radius);
+}
+
+body.theme-7days .widget-title {
+    text-shadow: 0 0 10px #cc3333, 2px 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 1px;
+}
+
+body.theme-7days .widget-artist {
+    text-shadow: 0 0 5px #8b0000;
+}
+
+body.theme-7days .widget-artwork img {
+    filter: contrast(1.2) saturate(0.8);
+}
+
+body.theme-7days .progress-fill {
+    box-shadow: 0 0 15px #cc3333;
+    background: linear-gradient(90deg, #8b0000, #cc3333, #ff6666);
+}
+
+body.theme-7days .source-icon {
+    animation: zombiePulse 2s ease-in-out infinite;
+}
+
+@keyframes zombiePulse {
+    0%, 100% {
+        box-shadow: 0 0 5px #8b0000;
+    }
+    50% {
+        box-shadow: 0 0 15px #cc3333, 0 0 25px #8b0000;
+    }
+}

@@ -1,0 +1,47 @@
+body.theme-neon {
+    --widget-bg: #0a0a0a;
+    --widget-border: #00ff88;
+    --widget-shadow: 0 0 10px rgba(0, 255, 136, 0.3), 0 0 20px rgba(0, 255, 136, 0.2);
+    --widget-gradient: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(255, 0, 255, 0.05) 100%);
+
+    --title-color: #00ff88;
+    --artist-color: #ff00ff;
+    --time-color: #00ffff;
+
+    --artwork-border: #00ff88;
+    --artwork-border-radius: 8px;
+
+    --progress-bg: #1a1a1a;
+    --progress-fill: #00ffff;
+
+    --icon-bg: #ff00ff;
+    --icon-border: #0a0a0a;
+    --icon-color: #00ff88;
+
+    --glow-color: rgba(0, 255, 255, 0.8);
+}
+
+body.theme-neon .widget {
+    animation: neonPulse 2s ease-in-out infinite;
+}
+
+body.theme-neon .widget-title {
+    text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88;
+}
+
+body.theme-neon .widget-artist {
+    text-shadow: 0 0 10px #ff00ff;
+}
+
+body.theme-neon .progress-fill {
+    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+}
+
+@keyframes neonPulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(0, 255, 136, 0.3), 0 0 20px rgba(0, 255, 136, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(0, 255, 136, 0.5), 0 0 40px rgba(0, 255, 136, 0.3);
+    }
+}

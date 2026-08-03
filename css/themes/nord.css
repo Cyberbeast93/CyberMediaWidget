@@ -1,0 +1,30 @@
+body.theme-nord {
+    --widget-bg: #2e3440;
+    --widget-border: #3b4252;
+    --widget-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --widget-gradient: linear-gradient(135deg, rgba(136, 192, 208, 0.1) 0%, transparent 100%);
+
+    --title-color: #eceff4;
+    --artist-color: #d8dee9;
+    --time-color: #a5adcb;
+
+    --artwork-border: #434c5e;
+    --artwork-border-radius: 8px;
+
+    --progress-bg: #3b4252;
+    --progress-fill: #88c0d0;
+
+    --icon-bg: #88c0d0;
+    --icon-border: #2e3440;
+    --icon-color: #2e3440;
+
+    --glow-color: rgba(136, 192, 208, 0.5);
+}
+
+body.theme-nord .widget {
+    border-color: #434c5e;
+}
+
+body.theme-nord .widget-title {
+    font-weight: 600;
+}

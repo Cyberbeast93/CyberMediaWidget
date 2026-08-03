@@ -1,0 +1,22 @@
+body.theme-dark {
+    --widget-bg: #1a1a2e;
+    --widget-border: #16213e;
+    --widget-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    --widget-gradient: linear-gradient(135deg, rgba(15, 52, 96, 0.1) 0%, transparent 100%);
+
+    --title-color: #ffffff;
+    --artist-color: #a0a0a0;
+    --time-color: #808080;
+
+    --artwork-border: #0f3460;
+    --artwork-border-radius: 8px;
+
+    --progress-bg: #2a2a4a;
+    --progress-fill: #e94560;
+
+    --icon-bg: #e94560;
+    --icon-border: #1a1a2e;
+    --icon-color: #ffffff;
+
+    --glow-color: rgba(233, 69, 96, 0.5);
+}

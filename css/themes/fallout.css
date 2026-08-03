@@ -1,0 +1,79 @@
+body.theme-fallout {
+    --widget-bg: #0a0a0a;
+    --widget-border: #00ff41;
+    --widget-shadow: 0 0 15px rgba(0, 255, 65, 0.3), inset 0 0 30px rgba(0, 255, 65, 0.05);
+    --widget-gradient: linear-gradient(135deg, rgba(0, 255, 65, 0.05) 0%, transparent 100%);
+
+    --title-color: #00ff41;
+    --artist-color: #00cc33;
+    --time-color: #009926;
+
+    --artwork-border: #00ff41;
+    --artwork-border-radius: 4px;
+
+    --progress-bg: #0a1a0a;
+    --progress-fill: #00ff41;
+
+    --icon-bg: #00ff41;
+    --icon-border: #0a0a0a;
+    --icon-color: #0a0a0a;
+
+    --glow-color: rgba(0, 255, 65, 0.8);
+}
+
+body.theme-fallout {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+body.theme-fallout .widget {
+    border-style: solid;
+    border-width: 3px;
+    position: relative;
+}
+
+body.theme-fallout .widget::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 65, 0.03) 2px,
+        rgba(0, 255, 65, 0.03) 4px
+    );
+    pointer-events: none;
+    border-radius: var(--border-radius);
+}
+
+body.theme-fallout .widget-title {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #00ff41;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+body.theme-fallout .widget-artist {
+    text-shadow: 0 0 5px #00cc33;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+body.theme-fallout .widget-artwork img {
+    filter: sepia(100%) hue-rotate(80deg) saturate(300%);
+}
+
+body.theme-fallout .progress-fill {
+    box-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
+}
+
+body.theme-fallout .source-icon {
+    animation: terminalBlink 1s step-end infinite;
+}
+
+@keyframes terminalBlink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+}

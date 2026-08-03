@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberMedia Widget - Now Playing</title>
+
+    <link rel="stylesheet" href="css/main.css">
+
+    <link rel="stylesheet" href="css/themes/dark.css">
+    <link rel="stylesheet" href="css/themes/light.css">
+    <link rel="stylesheet" href="css/themes/neon.css">
+    <link rel="stylesheet" href="css/themes/nord.css">
+    <link rel="stylesheet" href="css/themes/fallout.css">
+    <link rel="stylesheet" href="css/themes/borderlands.css">
+    <link rel="stylesheet" href="css/themes/7days.css">
+    <link rel="stylesheet" href="css/themes/halflife.css">
+</head>
+<body class="theme-dark">
+    <a href="settings.html" class="settings-link" title="Settings">⚙</a>
+    <div id="widget" class="widget">
+        <div class="widget-artwork">
+            <img id="artwork" src="assets/default-artwork.svg" alt="Album Art">
+            <div class="source-icon" id="source-icon"></div>
+        </div>
+
+        <div class="widget-info">
+            <div class="widget-info-top">
+                <div class="widget-info-text">
+                    <div class="widget-title" id="track-title">No Track Playing</div>
+                    <div class="widget-artist" id="track-artist">--</div>
+                </div>
+                <div class="widget-status-area">
+                    <span class="play-status" id="play-status">Now Playing</span>
+                </div>
+            </div>
+            <div class="widget-progress">
+                <div class="progress-time">
+                    <span id="current-time">0:00</span>
+                    <span id="total-time">0:00</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/themes.js"></script>
+    <script src="js/spotify.js"></script>
+    <script src="js/youtube.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

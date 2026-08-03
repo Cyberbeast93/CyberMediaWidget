@@ -1,0 +1,234 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --widget-width: 1200px;
+    --widget-height: 350px;
+    --border-radius: 20px;
+    --artwork-size: 290px;
+    --transition-speed: 0.3s;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: transparent !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+html {
+    background: transparent !important;
+}
+
+.settings-link {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: #808080;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 18px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 100;
+}
+
+body:hover .settings-link {
+    opacity: 1;
+}
+
+.settings-link:hover {
+    background: rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+}
+
+.widget {
+    width: var(--widget-width);
+    height: var(--widget-height);
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    padding: 30px;
+    border-radius: var(--border-radius);
+    background: var(--widget-bg);
+    border: 4px solid var(--widget-border);
+    box-shadow: var(--widget-shadow, 0 4px 20px rgba(0, 0, 0, 0.3)), 0 0 40px var(--glow-color, transparent);
+    transition: all var(--transition-speed) ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.widget::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--widget-gradient, transparent);
+    pointer-events: none;
+    border-radius: var(--border-radius);
+}
+
+.widget-artwork {
+    position: relative;
+    flex-shrink: 0;
+    width: var(--artwork-size);
+    height: var(--artwork-size);
+}
+
+.widget-artwork img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 3px solid var(--artwork-border);
+    transition: transform var(--transition-speed) ease;
+}
+
+.widget:hover .widget-artwork img {
+    transform: scale(1.05);
+}
+
+.source-icon {
+    display: none;
+}
+
+.widget-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.widget-info-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.widget-info-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.widget-title {
+    font-size: 52px;
+    font-weight: 700;
+    color: var(--title-color, #ffffff);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.1;
+    letter-spacing: var(--title-spacing, 0);
+}
+
+.widget-artist {
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--artist-color, rgba(255, 255, 255, 0.7));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+
+.progress-time {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-size: 28px;
+    color: #ffffff;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 8px;
+}
+
+.time-separator {
+    display: none;
+}
+
+.widget-status-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.play-status {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.widget-progress {
+    margin-top: auto;
+    width: 100%;
+    z-index: 1;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: var(--progress-bg);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--progress-fill);
+    border-radius: 5px;
+    transition: width 1s linear;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px var(--glow-color); }
+    50% { box-shadow: 0 0 20px var(--glow-color), 0 0 30px var(--glow-color); }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.widget-title,
+.widget-artist {
+    animation: slideIn 0.3s ease;
+}

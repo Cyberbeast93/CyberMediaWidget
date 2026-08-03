@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberMedia Widget - Settings</title>
+    <link rel="stylesheet" href="css/settings.css">
+</head>
+<body>
+    <div class="settings-container">
+        <header class="settings-header">
+            <h1>CyberMedia Widget Settings</h1>
+            <p>Configure your now-playing widget for OBS</p>
+            <span id="user-id-display" class="user-id-display"></span>
+        </header>
+
+        <div class="settings-grid">
+            <!-- API Configuration -->
+            <section class="settings-card">
+                <h2>API Configuration</h2>
+                <span id="server-status" class="server-status"></span>
+
+                <div class="form-group">
+                    <label for="spotify-client-id">Spotify Client ID</label>
+                    <input type="text" id="spotify-client-id" placeholder="Enter your Spotify Client ID">
+                    <div class="input-footer">
+                        <a href="https://developer.spotify.com/dashboard" target="_blank" class="help-link">Get from Spotify Developer Dashboard</a>
+                        <span id="spotify-status" class="spotify-status"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="spotify-client-secret">Spotify Client Secret</label>
+                    <input type="password" id="spotify-client-secret" placeholder="Enter your Spotify Client Secret">
+                    <a href="https://developer.spotify.com/dashboard" target="_blank" class="help-link">Find in your app settings</a>
+                </div>
+
+                <div class="form-group">
+                    <label for="youtube-api-key">YouTube API Key <span class="optional-badge">Optional</span></label>
+                    <input type="text" id="youtube-api-key" placeholder="Enter your YouTube API Key">
+                    <a href="https://console.cloud.google.com" target="_blank" class="help-link">Get from Google Cloud Console</a>
+                </div>
+
+                <div class="form-group">
+                    <label>Add this Redirect URI to your Spotify app</label>
+                    <input type="text" id="redirect-uri" readonly class="readonly-input">
+                    <p class="hint">Copy this into your Spotify app's Redirect URIs</p>
+                </div>
+
+                <div class="button-row">
+                    <button id="save-api-keys" class="btn btn-primary">Save API Keys</button>
+                    <button id="spotify-auth" class="btn btn-spotify">Connect Spotify</button>
+                </div>
+
+                <hr class="divider">
+
+                <div class="form-group">
+                    <label for="poll-interval">Poll Interval (seconds)</label>
+                    <input type="number" id="poll-interval" min="3" max="60" value="5">
+                </div>
+            </section>
+
+            <!-- Theme Selection + Preview -->
+            <section class="settings-card">
+                <h2>Theme</h2>
+                <div class="theme-grid" id="theme-grid">
+                    <button class="theme-btn active" data-theme="dark">Dark</button>
+                    <button class="theme-btn" data-theme="light">Light</button>
+                    <button class="theme-btn" data-theme="neon">Neon</button>
+                    <button class="theme-btn" data-theme="nord">Nord</button>
+                    <button class="theme-btn" data-theme="fallout">Fallout</button>
+                    <button class="theme-btn" data-theme="borderlands">Borderlands</button>
+                    <button class="theme-btn" data-theme="7days">7 Days</button>
+                    <button class="theme-btn" data-theme="halflife">Half-Life</button>
+                </div>
+
+                <h2 class="preview-heading">Preview</h2>
+                <div class="preview-container">
+                    <iframe id="preview-frame" src="index.html" frameborder="0"></iframe>
+                </div>
+                <button id="refresh-preview" class="btn btn-secondary">Refresh Preview</button>
+            </section>
+        </div>
+
+        <!-- OBS URL -->
+        <section class="settings-card obs-section">
+            <h2>OBS Browser Source URL</h2>
+            <div class="url-display">
+                <input type="text" id="obs-url" readonly>
+                <button id="copy-url" class="btn btn-primary">Copy</button>
+            </div>
+            <p class="hint">Add this as a Browser Source in OBS. Resize as needed within OBS.</p>
+        </section>
+
+        <footer class="settings-footer">
+            <button id="save-settings" class="btn btn-primary btn-large">Save Settings</button>
+            <button id="reset-settings" class="btn btn-danger">Reset All</button>
+        </footer>
+    </div>
+
+    <script src="js/settings.js"></script>
+</body>
+</html>
