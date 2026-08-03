@@ -1,0 +1,63 @@
+body.theme-dynamic {
+    --widget-bg: var(--dynamic-bg, #1a1a2e);
+    --widget-border: var(--dynamic-primary, #00e5ff);
+    --widget-shadow: 0 0 20px var(--dynamic-glow, rgba(0, 229, 255, 0.3));
+    --widget-gradient: linear-gradient(135deg, var(--dynamic-gradient-start, rgba(0, 229, 255, 0.1)) 0%, transparent 100%);
+
+    --title-color: var(--dynamic-title, #ffffff);
+    --artist-color: var(--dynamic-secondary, #b0b0b0);
+    --time-color: var(--dynamic-time, #808080);
+
+    --artwork-border: var(--dynamic-primary, #00e5ff);
+    --artwork-border-radius: 8px;
+
+    --progress-bg: var(--dynamic-progress-bg, #2a2a3e);
+    --progress-fill: var(--dynamic-primary, #00e5ff);
+
+    --icon-bg: var(--dynamic-primary, #00e5ff);
+    --icon-border: var(--dynamic-bg, #1a1a2e);
+    --icon-color: var(--dynamic-icon-color, #ffffff);
+
+    --glow-color: var(--dynamic-glow, rgba(0, 229, 255, 0.6));
+}
+
+body.theme-dynamic {
+    transition: all 0.5s ease;
+}
+
+body.theme-dynamic .widget {
+    border-width: 3px;
+    transition: border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+body.theme-dynamic .widget-title {
+    text-shadow: 0 0 10px var(--dynamic-glow, rgba(0, 229, 255, 0.5));
+    transition: color 0.5s ease, text-shadow 0.5s ease;
+}
+
+body.theme-dynamic .widget-artist {
+    transition: color 0.5s ease;
+}
+
+body.theme-dynamic .widget-artwork img {
+    border-width: 3px;
+    border-style: solid;
+    transition: border-color 0.5s ease;
+}
+
+body.theme-dynamic .progress-fill {
+    box-shadow: 0 0 10px var(--dynamic-glow, rgba(0, 229, 255, 0.5));
+    transition: background 0.5s ease, box-shadow 0.5s ease;
+}
+
+body.theme-dynamic .play-status {
+    transition: color 0.5s ease;
+}
+
+body.theme-dynamic .progress-time {
+    transition: color 0.5s ease;
+}
+
+body.theme-dynamic .source-icon {
+    transition: background 0.5s ease, border-color 0.5s ease;
+}

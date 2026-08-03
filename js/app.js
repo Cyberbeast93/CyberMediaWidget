@@ -2,13 +2,114 @@ const WidgetApp = {
     elements: {},
     currentTrack: null,
     progressInterval: null,
+    canvas: null,
+    ctx: null,
 
     init() {
         this.cacheElements();
         this.loadConfig();
         this.bindEvents();
         this.checkAuth();
+        this.initColorExtractor();
         window.WidgetApp = this;
+    },
+
+    initColorExtractor() {
+        this.canvas = document.createElement('canvas');
+        this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
+        this.canvas.width = 50;
+        this.canvas.height = 50;
+    },
+
+    extractColors(imageUrl) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            
+            img.onload = () => {
+                this.ctx.drawImage(img, 0, 0, 50, 50);
+                const imageData = this.ctx.getImageData(0, 0, 50, 50).data;
+                
+                const colors = this.analyzeColors(imageData);
+                this.applyDynamicColors(colors);
+                resolve(colors);
+            };
+            
+            img.onerror = () => {
+                resolve(null);
+            };
+            
+            img.src = imageUrl;
+        });
+    },
+
+    analyzeColors(data) {
+        const colorCounts = {};
+        const step = 4 * 10;
+        
+        for (let i = 0; i < data.length; i += step) {
+            const r = Math.floor(data[i] / 32) * 32;
+            const g = Math.floor(data[i + 1] / 32) * 32;
+            const b = Math.floor(data[i + 2] / 32) * 32;
+            const key = `${r},${g},${b}`;
+            colorCounts[key] = (colorCounts[key] || 0) + 1;
+        }
+        
+        const sorted = Object.entries(colorCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([color]) => {
+                const [r, g, b] = color.split(',').map(Number);
+                return { r, g, b };
+            });
+        
+        const primary = sorted[0] || { r: 0, g: 229, b: 255 };
+        const secondary = sorted[1] || { r: 180, g: 180, b: 180 };
+        
+        const brightness = (primary.r * 299 + primary.g * 587 + primary.b * 114) / 1000;
+        const textColor = brightness > 128 ? this.darkenColor(primary, 0.6) : this.lightenColor(primary, 0.3);
+        
+        const bgColor = this.darkenColor(primary, 0.85);
+        const bgRgb = bgColor.replace('rgb(', '').replace(')', '').split(',').map(Number);
+        const widgetBg = `rgb(${Math.floor(bgRgb[0] * 0.3)}, ${Math.floor(bgRgb[1] * 0.3)}, ${Math.floor(bgRgb[2] * 0.3)})`;
+        
+        return {
+            primary: `rgb(${primary.r}, ${primary.g}, ${primary.b})`,
+            secondary: `rgb(${secondary.r}, ${secondary.g}, ${secondary.b})`,
+            title: textColor,
+            bg: widgetBg,
+            glow: `rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.4)`,
+            progressBg: `rgb(${Math.floor(primary.r * 0.15)}, ${Math.floor(primary.g * 0.15)}, ${Math.floor(primary.b * 0.15)})`
+        };
+    },
+
+    lightenColor(color, amount) {
+        const r = Math.min(255, Math.floor(color.r + (255 - color.r) * amount));
+        const g = Math.min(255, Math.floor(color.g + (255 - color.g) * amount));
+        const b = Math.min(255, Math.floor(color.b + (255 - color.b) * amount));
+        return `rgb(${r}, ${g}, ${b})`;
+    },
+
+    darkenColor(color, amount) {
+        const r = Math.floor(color.r * (1 - amount));
+        const g = Math.floor(color.g * (1 - amount));
+        const b = Math.floor(color.b * (1 - amount));
+        return `rgb(${r}, ${g}, ${b})`;
+    },
+
+    applyDynamicColors(colors) {
+        if (!colors) return;
+        
+        const root = document.documentElement;
+        root.style.setProperty('--dynamic-primary', colors.primary);
+        root.style.setProperty('--dynamic-secondary', colors.secondary);
+        root.style.setProperty('--dynamic-title', colors.title);
+        root.style.setProperty('--dynamic-bg', colors.bg);
+        root.style.setProperty('--dynamic-glow', colors.glow);
+        root.style.setProperty('--dynamic-progress-bg', colors.progressBg);
+        root.style.setProperty('--dynamic-gradient-start', colors.glow);
+        root.style.setProperty('--dynamic-time', colors.secondary);
+        root.style.setProperty('--dynamic-icon-color', colors.title);
     },
 
     cacheElements() {
@@ -90,6 +191,10 @@ const WidgetApp = {
         if (track.artwork) {
             this.elements.artwork.src = track.artwork;
             this.elements.artwork.style.display = 'block';
+            
+            if (ThemeManager.getTheme() === 'dynamic') {
+                this.extractColors(track.artwork);
+            }
         } else {
             this.elements.artwork.style.display = 'none';
         }
