@@ -35,8 +35,8 @@ body.theme-dynamic-advanced::before {
     background-image: var(--dynamic-artwork-url, none);
     background-size: cover;
     background-position: center;
-    filter: blur(40px) saturate(1.5);
-    opacity: 0.25;
+    filter: blur(25px) saturate(1.5);
+    opacity: 0.3;
     z-index: -1;
     transition: background-image 0.5s ease, opacity 0.5s ease;
     animation: dynamicBgPan 20s ease-in-out infinite alternate;
