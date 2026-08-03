@@ -1,0 +1,109 @@
+body.theme-dynamic-advanced {
+    --widget-bg: var(--dynamic-bg, #1a1a2e);
+    --widget-border: var(--dynamic-primary, #00e5ff);
+    --widget-shadow: 0 0 20px var(--dynamic-glow, rgba(0, 229, 255, 0.3));
+    --widget-gradient: linear-gradient(135deg, var(--dynamic-gradient-start, rgba(0, 229, 255, 0.1)) 0%, transparent 100%);
+
+    --title-color: var(--dynamic-title, #ffffff);
+    --artist-color: var(--dynamic-secondary, #b0b0b0);
+    --time-color: var(--dynamic-time, #808080);
+
+    --artwork-border: var(--dynamic-primary, #00e5ff);
+    --artwork-border-radius: 8px;
+
+    --progress-bg: var(--dynamic-progress-bg, #2a2a3e);
+    --progress-fill: var(--dynamic-primary, #00e5ff);
+
+    --icon-bg: var(--dynamic-primary, #00e5ff);
+    --icon-border: var(--dynamic-bg, #1a1a2e);
+    --icon-color: var(--dynamic-icon-color, #ffffff);
+
+    --glow-color: var(--dynamic-glow, rgba(0, 229, 255, 0.6));
+}
+
+body.theme-dynamic-advanced {
+    transition: all 0.5s ease;
+}
+
+body.theme-dynamic-advanced::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    background-image: var(--dynamic-artwork-url, none);
+    background-size: cover;
+    background-position: center;
+    filter: blur(40px) saturate(1.5);
+    opacity: 0.25;
+    z-index: -1;
+    transition: background-image 0.5s ease, opacity 0.5s ease;
+    animation: dynamicBgPan 20s ease-in-out infinite alternate;
+}
+
+@keyframes dynamicBgPan {
+    0% {
+        transform: scale(1.1) translate(0, 0);
+    }
+    100% {
+        transform: scale(1.1) translate(2%, -2%);
+    }
+}
+
+body.theme-dynamic-advanced .widget {
+    border-width: 3px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: border-color 0.5s ease, box-shadow 0.5s ease, background 0.5s ease;
+}
+
+body.theme-dynamic-advanced .widget::before {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+}
+
+body.theme-dynamic-advanced .widget-title {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 0 0 20px var(--dynamic-glow, rgba(0, 229, 255, 0.5));
+    transition: color 0.5s ease, text-shadow 0.5s ease;
+}
+
+body.theme-dynamic-advanced .widget-artist {
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+    transition: color 0.5s ease;
+}
+
+body.theme-dynamic-advanced .widget-artwork img {
+    border-width: 3px;
+    border-style: solid;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px var(--dynamic-glow, rgba(0, 229, 255, 0.3));
+    transition: border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+body.theme-dynamic-advanced .widget:hover .widget-artwork img {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 30px var(--dynamic-glow, rgba(0, 229, 255, 0.5));
+}
+
+body.theme-dynamic-advanced .progress-fill {
+    box-shadow: 0 0 15px var(--dynamic-glow, rgba(0, 229, 255, 0.6));
+    transition: background 0.5s ease, box-shadow 0.5s ease;
+}
+
+body.theme-dynamic-advanced .play-status {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    transition: color 0.5s ease;
+}
+
+body.theme-dynamic-advanced .progress-time {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    transition: color 0.5s ease;
+}
+
+body.theme-dynamic-advanced .source-icon {
+    transition: background 0.5s ease, border-color 0.5s ease;
+}
+
+body.theme-dynamic-advanced .progress-bar {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}

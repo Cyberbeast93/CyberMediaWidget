@@ -259,8 +259,13 @@ const WidgetApp = {
             this.elements.artwork.src = track.artwork;
             this.elements.artwork.style.display = 'block';
             
-            if (ThemeManager.getTheme() === 'dynamic') {
+            const currentTheme = ThemeManager.getTheme();
+            if (currentTheme === 'dynamic' || currentTheme === 'dynamic-advanced') {
                 this.extractColors(track.artwork);
+            }
+            
+            if (currentTheme === 'dynamic-advanced') {
+                document.documentElement.style.setProperty('--dynamic-artwork-url', `url(${track.artwork})`);
             }
         } else {
             this.elements.artwork.style.display = 'none';
