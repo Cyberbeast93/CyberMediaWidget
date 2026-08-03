@@ -129,7 +129,7 @@ body:hover .settings-link {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 12px;
 }
 
 .widget-title {

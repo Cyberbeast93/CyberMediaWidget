@@ -17,8 +17,8 @@ const WidgetApp = {
     initColorExtractor() {
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
-        this.canvas.width = 50;
-        this.canvas.height = 50;
+        this.canvas.width = 64;
+        this.canvas.height = 64;
     },
 
     extractColors(imageUrl) {
@@ -27,8 +27,8 @@ const WidgetApp = {
             img.crossOrigin = 'anonymous';
             
             img.onload = () => {
-                this.ctx.drawImage(img, 0, 0, 50, 50);
-                const imageData = this.ctx.getImageData(0, 0, 50, 50).data;
+                this.ctx.drawImage(img, 0, 0, 64, 64);
+                const imageData = this.ctx.getImageData(0, 0, 64, 64).data;
                 
                 const colors = this.analyzeColors(imageData);
                 this.applyDynamicColors(colors);
@@ -44,72 +44,139 @@ const WidgetApp = {
     },
 
     analyzeColors(data) {
-        const colorCounts = {};
-        const step = 4 * 10;
+        const colors = [];
         
-        for (let i = 0; i < data.length; i += step) {
-            const r = Math.floor(data[i] / 32) * 32;
-            const g = Math.floor(data[i + 1] / 32) * 32;
-            const b = Math.floor(data[i + 2] / 32) * 32;
-            const key = `${r},${g},${b}`;
-            colorCounts[key] = (colorCounts[key] || 0) + 1;
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const a = data[i + 3];
+            
+            if (a < 128) continue;
+            
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            if (brightness < 20) continue;
+            
+            colors.push({ r, g, b, brightness });
         }
         
-        const sorted = Object.entries(colorCounts)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 5)
-            .map(([color]) => {
-                const [r, g, b] = color.split(',').map(Number);
-                return { r, g, b };
-            });
+        if (colors.length === 0) {
+            return {
+                primary: { r: 0, g: 229, b: 255 },
+                secondary: { r: 180, g: 180, b: 180 }
+            };
+        }
         
-        const primary = sorted[0] || { r: 0, g: 229, b: 255 };
-        const secondary = sorted[1] || { r: 180, g: 180, b: 180 };
+        colors.sort((a, b) => a.brightness - b.brightness);
         
-        const brightness = (primary.r * 299 + primary.g * 587 + primary.b * 114) / 1000;
-        const textColor = brightness > 128 ? this.darkenColor(primary, 0.6) : this.lightenColor(primary, 0.3);
+        const midIndex = Math.floor(colors.length / 2);
+        const darkerHalf = colors.slice(0, midIndex);
+        const lighterHalf = colors.slice(midIndex);
         
-        const bgColor = this.darkenColor(primary, 0.85);
-        const bgRgb = bgColor.replace('rgb(', '').replace(')', '').split(',').map(Number);
-        const widgetBg = `rgb(${Math.floor(bgRgb[0] * 0.3)}, ${Math.floor(bgRgb[1] * 0.3)}, ${Math.floor(bgRgb[2] * 0.3)})`;
-        
-        return {
-            primary: `rgb(${primary.r}, ${primary.g}, ${primary.b})`,
-            secondary: `rgb(${secondary.r}, ${secondary.g}, ${secondary.b})`,
-            title: textColor,
-            bg: widgetBg,
-            glow: `rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.4)`,
-            progressBg: `rgb(${Math.floor(primary.r * 0.15)}, ${Math.floor(primary.g * 0.15)}, ${Math.floor(primary.b * 0.15)})`
+        const avgColor = (arr) => {
+            if (arr.length === 0) return { r: 128, g: 128, b: 128 };
+            const sum = arr.reduce((acc, c) => ({
+                r: acc.r + c.r,
+                g: acc.g + c.g,
+                b: acc.b + c.b
+            }), { r: 0, g: 0, b: 0 });
+            return {
+                r: Math.round(sum.r / arr.length),
+                g: Math.round(sum.g / arr.length),
+                b: Math.round(sum.b / arr.length)
+            };
         };
+        
+        const vibrantColors = colors.filter(c => {
+            const max = Math.max(c.r, c.g, c.b);
+            const min = Math.min(c.r, c.g, c.b);
+            const saturation = max === 0 ? 0 : (max - min) / max;
+            return saturation > 0.25 && c.brightness > 60 && c.brightness < 220;
+        });
+        
+        let primary, secondary;
+        
+        if (vibrantColors.length > 0) {
+            vibrantColors.sort((a, b) => {
+                const satA = (Math.max(a.r, a.g, a.b) - Math.min(a.r, a.g, a.b)) / Math.max(a.r, a.g, a.b);
+                const satB = (Math.max(b.r, b.g, b.b) - Math.min(b.r, b.g, b.b)) / Math.max(b.r, b.g, b.b);
+                return satB - satA;
+            });
+            primary = vibrantColors[0];
+            secondary = vibrantColors[Math.min(1, vibrantColors.length - 1)];
+        } else {
+            primary = avgColor(lighterHalf);
+            secondary = avgColor(darkerHalf);
+        }
+        
+        return { primary, secondary };
     },
 
-    lightenColor(color, amount) {
-        const r = Math.min(255, Math.floor(color.r + (255 - color.r) * amount));
-        const g = Math.min(255, Math.floor(color.g + (255 - color.g) * amount));
-        const b = Math.min(255, Math.floor(color.b + (255 - color.b) * amount));
-        return `rgb(${r}, ${g}, ${b})`;
-    },
-
-    darkenColor(color, amount) {
-        const r = Math.floor(color.r * (1 - amount));
-        const g = Math.floor(color.g * (1 - amount));
-        const b = Math.floor(color.b * (1 - amount));
-        return `rgb(${r}, ${g}, ${b})`;
+    ensureContrast(color, targetBg, minContrast) {
+        const getLuminance = (c) => {
+            const [r, g, b] = [c.r, c.g, c.b].map(v => {
+                v /= 255;
+                return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+            });
+            return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        };
+        
+        const getContrast = (l1, l2) => {
+            const lighter = Math.max(l1, l2);
+            const darker = Math.min(l1, l2);
+            return (lighter + 0.05) / (darker + 0.05);
+        };
+        
+        let adjusted = { ...color };
+        let attempts = 0;
+        
+        while (attempts < 20) {
+            const colorLum = getLuminance(adjusted);
+            const bgLum = getLuminance(targetBg);
+            const contrast = getContrast(colorLum, bgLum);
+            
+            if (contrast >= minContrast) break;
+            
+            if (bgLum > 0.5) {
+                adjusted.r = Math.max(0, adjusted.r - 15);
+                adjusted.g = Math.max(0, adjusted.g - 15);
+                adjusted.b = Math.max(0, adjusted.b - 15);
+            } else {
+                adjusted.r = Math.min(255, adjusted.r + 15);
+                adjusted.g = Math.min(255, adjusted.g + 15);
+                adjusted.b = Math.min(255, adjusted.b + 15);
+            }
+            attempts++;
+        }
+        
+        return adjusted;
     },
 
     applyDynamicColors(colors) {
         if (!colors) return;
         
+        const { primary, secondary } = colors;
+        
+        const bgDarkness = 0.15;
+        const widgetBg = {
+            r: Math.floor(primary.r * bgDarkness),
+            g: Math.floor(primary.g * bgDarkness),
+            b: Math.floor(primary.b * bgDarkness)
+        };
+        
+        const titleColor = this.ensureContrast(primary, widgetBg, 4.5);
+        const artistColor = this.ensureContrast(secondary, widgetBg, 3.0);
+        
         const root = document.documentElement;
-        root.style.setProperty('--dynamic-primary', colors.primary);
-        root.style.setProperty('--dynamic-secondary', colors.secondary);
-        root.style.setProperty('--dynamic-title', colors.title);
-        root.style.setProperty('--dynamic-bg', colors.bg);
-        root.style.setProperty('--dynamic-glow', colors.glow);
-        root.style.setProperty('--dynamic-progress-bg', colors.progressBg);
-        root.style.setProperty('--dynamic-gradient-start', colors.glow);
-        root.style.setProperty('--dynamic-time', colors.secondary);
-        root.style.setProperty('--dynamic-icon-color', colors.title);
+        root.style.setProperty('--dynamic-primary', `rgb(${primary.r}, ${primary.g}, ${primary.b})`);
+        root.style.setProperty('--dynamic-secondary', `rgb(${artistColor.r}, ${artistColor.g}, ${artistColor.b})`);
+        root.style.setProperty('--dynamic-title', `rgb(${titleColor.r}, ${titleColor.g}, ${titleColor.b})`);
+        root.style.setProperty('--dynamic-bg', `rgb(${widgetBg.r}, ${widgetBg.g}, ${widgetBg.b})`);
+        root.style.setProperty('--dynamic-glow', `rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.4)`);
+        root.style.setProperty('--dynamic-progress-bg', `rgb(${Math.floor(primary.r * 0.1)}, ${Math.floor(primary.g * 0.1)}, ${Math.floor(primary.b * 0.1)})`);
+        root.style.setProperty('--dynamic-gradient-start', `rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.15)`);
+        root.style.setProperty('--dynamic-time', `rgb(${titleColor.r}, ${titleColor.g}, ${titleColor.b})`);
+        root.style.setProperty('--dynamic-icon-color', `rgb(${widgetBg.r}, ${widgetBg.g}, ${widgetBg.b})`);
     },
 
     cacheElements() {
