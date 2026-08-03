@@ -22,7 +22,7 @@ body.theme-fallout {
 }
 
 body.theme-fallout {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Consolas', 'Lucida Console', 'Courier New', monospace;
 }
 
 body.theme-fallout .widget {
@@ -51,9 +51,10 @@ body.theme-fallout .widget::before {
 
 body.theme-fallout .widget-title {
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     text-shadow: 0 0 10px #00ff41;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Consolas', 'Lucida Console', 'Courier New', monospace;
+    font-size: 46px;
 }
 
 body.theme-fallout .widget-artist {
