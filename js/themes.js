@@ -1,6 +1,6 @@
 const THEMES = [
     'dark', 'light', 'neon', 'nord',
-    'fallout', 'borderlands', '7days', 'halflife', 'minecraft', 'dynamic', 'dynamic-advanced', 'cyberpunk'
+    'fallout', 'borderlands', '7days', 'halflife', 'minecraft', 'cyberpunk', 'dynamic', 'dynamic-advanced'
 ];
 
 const ThemeManager = {
