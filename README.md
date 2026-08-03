@@ -1,4 +1,4 @@
-# CyberMedia Widget
+# Cyber Media Widget
 
 A customizable OBS stream overlay widget that displays currently playing tracks from Spotify and YouTube with multiple gaming-themed presets.
 

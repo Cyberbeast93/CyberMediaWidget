@@ -45,7 +45,7 @@ const SettingsApp = {
         let userId = urlParams.get('user');
 
         if (!userId) {
-            userId = localStorage.getItem('cybermedia-user-id');
+            userId = localStorage.getItem('cyber-media-user-id');
         }
 
         if (!userId) {
@@ -53,7 +53,7 @@ const SettingsApp = {
                 const response = await fetch('/api/user/create');
                 const data = await response.json();
                 userId = data.userId;
-                localStorage.setItem('cybermedia-user-id', userId);
+                localStorage.setItem('cyber-media-user-id', userId);
             } catch (error) {
                 console.error('Failed to create user:', error);
                 userId = 'default';
@@ -61,7 +61,7 @@ const SettingsApp = {
         }
 
         this.userId = userId;
-        localStorage.setItem('cybermedia-user-id', userId);
+        localStorage.setItem('cyber-media-user-id', userId);
 
         if (urlParams.get('user') !== userId) {
             window.history.replaceState({}, document.title, `?user=${userId}`);
@@ -105,7 +105,7 @@ const SettingsApp = {
     },
 
     loadSettings() {
-        const saved = localStorage.getItem('cybermedia-settings');
+        const saved = localStorage.getItem('cyber-media-settings');
         if (saved) {
             this.settings = { ...this.settings, ...JSON.parse(saved) };
         }
@@ -149,7 +149,7 @@ const SettingsApp = {
 
     saveSettings() {
         this.settings.pollInterval = parseInt(this.elements.pollInterval.value) || 5;
-        localStorage.setItem('cybermedia-settings', JSON.stringify(this.settings));
+        localStorage.setItem('cyber-media-settings', JSON.stringify(this.settings));
         this.updateObsUrl();
         this.showToast('Settings saved!');
         setTimeout(() => this.refreshPreview(), 100);
@@ -194,7 +194,7 @@ const SettingsApp = {
         this.elements.themeGrid.querySelectorAll('.theme-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.theme === theme);
         });
-        localStorage.setItem('cybermedia-settings', JSON.stringify(this.settings));
+        localStorage.setItem('cyber-media-settings', JSON.stringify(this.settings));
         localStorage.setItem('widget-theme', theme);
         this.updateObsUrl();
         this.refreshPreview();

@@ -1,7 +1,7 @@
 {
-  "name": "cybermedia-widget",
+  "name": "cyber-media-widget",
   "version": "1.0.0",
-  "description": "CyberMedia Widget - Now Playing for Spotify & YouTube in OBS",
+  "description": "Cyber Media Widget - Now Playing for Spotify & YouTube in OBS",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
