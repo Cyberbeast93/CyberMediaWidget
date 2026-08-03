@@ -1,6 +1,6 @@
 const THEMES = [
     'dark', 'light', 'neon', 'nord',
-    'fallout', 'borderlands', '7days', 'halflife'
+    'fallout', 'borderlands', '7days', 'halflife', 'minecraft'
 ];
 
 const ThemeManager = {
@@ -38,7 +38,7 @@ const ThemeManager = {
     applyThemeEffects(theme) {
         const widget = document.getElementById('widget');
 
-        widget.classList.remove('theme-fallout', 'theme-borderlands', 'theme-7days', 'theme-halflife');
+        widget.classList.remove('theme-fallout', 'theme-borderlands', 'theme-7days', 'theme-halflife', 'theme-minecraft');
 
         switch (theme) {
             case 'fallout':
@@ -52,6 +52,9 @@ const ThemeManager = {
                 break;
             case 'halflife':
                 widget.classList.add('theme-halflife');
+                break;
+            case 'minecraft':
+                widget.classList.add('theme-minecraft');
                 break;
         }
     },
