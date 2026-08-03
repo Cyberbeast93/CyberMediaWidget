@@ -62,7 +62,7 @@ body.theme-fallout .widget-artist {
 }
 
 body.theme-fallout .widget-artwork img {
-    filter: sepia(100%) hue-rotate(80deg) saturate(300%);
+    filter: none;
 }
 
 body.theme-fallout .progress-fill {
