@@ -270,6 +270,7 @@ body {
     border: none;
     border-radius: 16px;
     background: transparent;
+    overflow: hidden;
     transform: scale(0.35);
     transform-origin: center center;
     position: absolute;
