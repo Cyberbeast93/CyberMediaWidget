@@ -46,7 +46,7 @@ body.theme-fallout .widget::before {
         rgba(0, 255, 65, 0.03) 4px
     );
     pointer-events: none;
-    border-radius: var(--border-radius);
+    border-radius: inherit;
 }
 
 body.theme-fallout .widget-title {

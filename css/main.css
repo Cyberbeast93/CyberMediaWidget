@@ -19,7 +19,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow: hidden;
+    overflow: visible;
     position: relative;
 }
 
@@ -79,7 +79,7 @@ body:hover .settings-link {
     bottom: 0;
     background: var(--widget-gradient, transparent);
     pointer-events: none;
-    border-radius: var(--border-radius);
+    border-radius: inherit;
 }
 
 .widget-artwork {

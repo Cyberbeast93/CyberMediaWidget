@@ -53,7 +53,7 @@ body.theme-minecraft .widget::before {
             rgba(0, 0, 0, 0.03) 4px
         );
     pointer-events: none;
-    border-radius: var(--border-radius);
+    border-radius: inherit;
 }
 
 body.theme-minecraft .widget-title {

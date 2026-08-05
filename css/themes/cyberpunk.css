@@ -49,7 +49,7 @@ body.theme-cyberpunk .widget::before {
             rgba(0, 255, 255, 0.02) 4px
         );
     pointer-events: none;
-    border-radius: var(--border-radius);
+    border-radius: inherit;
     animation: cyberpunkScan 4s linear infinite;
 }
 

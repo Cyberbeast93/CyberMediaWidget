@@ -41,7 +41,7 @@ body.theme-halflife .widget::before {
         rgba(255, 102, 0, 0.02) 4px
     );
     pointer-events: none;
-    border-radius: var(--border-radius);
+    border-radius: inherit;
 }
 
 body.theme-halflife .widget-title {

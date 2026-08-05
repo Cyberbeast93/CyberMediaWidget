@@ -37,7 +37,7 @@ body.theme-7days .widget::before {
         radial-gradient(ellipse at 10% 20%, rgba(139, 0, 0, 0.2) 0%, transparent 50%),
         radial-gradient(ellipse at 90% 80%, rgba(139, 0, 0, 0.15) 0%, transparent 50%);
     pointer-events: none;
-    border-radius: var(--border-radius);
+    border-radius: inherit;
 }
 
 body.theme-7days .widget-title {
