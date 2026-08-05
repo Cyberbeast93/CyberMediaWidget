@@ -22,6 +22,10 @@ body.theme-neon {
 }
 
 body.theme-neon .widget {
+    animation: none;
+}
+
+body.theme-neon .widget::after {
     animation: neonPulse 2s ease-in-out infinite;
 }
 
