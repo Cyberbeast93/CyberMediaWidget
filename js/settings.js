@@ -1,5 +1,6 @@
 const SettingsApp = {
     userId: null,
+    appliedTheme: 'dark',
     settings: {
         theme: 'dark',
         pollInterval: 5
@@ -9,13 +10,13 @@ const SettingsApp = {
         this.cacheElements();
         await this.getUserId();
         this.loadSettings();
+        await this.loadServerConfig();
         this.bindEvents();
         this.updateUI();
         this.updateObsUrl();
         this.checkSpotifyStatus();
-        this.refreshPreview();
         this.checkUrlParams();
-        await this.loadServerConfig();
+        this.refreshPreview();
     },
 
     cacheElements() {
@@ -26,6 +27,8 @@ const SettingsApp = {
             redirectUri: document.getElementById('redirect-uri'),
             pollInterval: document.getElementById('poll-interval'),
             themeGrid: document.getElementById('theme-grid'),
+            applyTheme: document.getElementById('apply-theme'),
+            themeStatus: document.getElementById('theme-status'),
             obsUrl: document.getElementById('obs-url'),
             copyUrl: document.getElementById('copy-url'),
             refreshPreview: document.getElementById('refresh-preview'),
@@ -79,6 +82,7 @@ const SettingsApp = {
             }
         });
 
+        this.elements.applyTheme.addEventListener('click', () => this.applyTheme());
         this.elements.copyUrl.addEventListener('click', () => this.copyObsUrl());
         this.elements.refreshPreview.addEventListener('click', () => this.refreshPreview());
         this.elements.saveSettings.addEventListener('click', () => this.saveSettings());
@@ -116,6 +120,10 @@ const SettingsApp = {
             const response = await fetch(`/api/config/${this.userId}`);
             if (response.ok) {
                 const config = await response.json();
+                if (config.theme) {
+                    this.appliedTheme = config.theme;
+                    this.settings.theme = config.theme;
+                }
                 if (config.exists) {
                     if (config.spotifyClientId) {
                         this.elements.spotifyClientId.value = config.spotifyClientId;
@@ -195,15 +203,35 @@ const SettingsApp = {
             btn.classList.toggle('active', btn.dataset.theme === theme);
         });
         localStorage.setItem('cyber-media-settings', JSON.stringify(this.settings));
-        localStorage.setItem('widget-theme', theme);
-        this.updateObsUrl();
+        this.updateThemeStatus();
         this.refreshPreview();
+    },
+
+    async applyTheme() {
+        try {
+            const response = await fetch(`/api/config/${this.userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ theme: this.settings.theme })
+            });
+
+            if (!response.ok) throw new Error('Theme update failed');
+
+            this.appliedTheme = this.settings.theme;
+            localStorage.setItem('widget-theme', this.appliedTheme);
+            this.updateThemeStatus();
+            this.refreshPreview();
+            this.showToast('Theme applied to OBS!');
+        } catch (error) {
+            this.showToast('Failed to apply theme', true);
+        }
     },
 
     updateObsUrl() {
         const host = window.location.hostname;
         const params = new URLSearchParams({
-            theme: this.settings.theme,
             user: this.userId
         });
         this.elements.obsUrl.value = `http://${host}:8080/index.html?${params.toString()}`;
@@ -224,6 +252,7 @@ const SettingsApp = {
         const host = window.location.hostname;
         const params = new URLSearchParams({
             theme: this.settings.theme,
+            preview: '1',
             user: this.userId
         });
         const src = `https://${host}:8443/index.html?${params.toString()}&_t=${Date.now()}`;
@@ -274,6 +303,7 @@ const SettingsApp = {
                 theme: 'dark',
                 pollInterval: 5
             };
+            this.appliedTheme = 'dark';
             
             this.elements.spotifyClientId.value = '';
             this.elements.spotifyClientSecret.value = '';
@@ -293,6 +323,16 @@ const SettingsApp = {
         this.elements.themeGrid.querySelectorAll('.theme-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.theme === this.settings.theme);
         });
+        this.updateThemeStatus();
+    },
+
+    updateThemeStatus() {
+        const isApplied = this.settings.theme === this.appliedTheme;
+        this.elements.applyTheme.disabled = isApplied;
+        this.elements.themeStatus.textContent = isApplied
+            ? 'Applied to OBS'
+            : 'Preview only. Apply to update OBS.';
+        this.elements.themeStatus.className = `theme-status ${isApplied ? 'applied' : 'pending'}`;
     },
 
     showToast(message, isError = false) {

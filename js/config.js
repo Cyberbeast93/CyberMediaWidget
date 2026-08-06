@@ -24,7 +24,8 @@ const CONFIG = {
 function getConfigFromUrl() {
     const params = new URLSearchParams(window.location.search);
     return {
-        theme: params.get('theme') || CONFIG.defaults.theme,
+        theme: params.get('theme'),
+        preview: params.get('preview') === '1',
         source: params.get('source') || CONFIG.defaults.source,
         user: params.get('user'),
         width: params.get('width'),

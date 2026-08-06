@@ -2,16 +2,18 @@ const WidgetApp = {
     elements: {},
     currentTrack: null,
     progressInterval: null,
+    themePollInterval: null,
     canvas: null,
     ctx: null,
 
-    init() {
+    async init() {
         this.cacheElements();
-        this.loadConfig();
+        await this.loadConfig();
         this.bindEvents();
         this.checkAuth();
         this.initColorExtractor();
         window.WidgetApp = this;
+        this.startThemePolling();
     },
 
     initColorExtractor() {
@@ -193,20 +195,62 @@ const WidgetApp = {
         };
     },
 
-    loadConfig() {
+    async loadConfig() {
         const urlConfig = getConfigFromUrl();
         const savedTheme = ThemeManager.getSavedTheme();
-        const theme = urlConfig.theme || savedTheme;
-
-        ThemeManager.init(theme);
-
         this.userId = urlConfig.user || null;
+        this.isPreview = urlConfig.preview;
+
+        let serverTheme = null;
+        if (this.userId) {
+            try {
+                const response = await fetch(`/api/config/${encodeURIComponent(this.userId)}`);
+                if (response.ok) {
+                    const config = await response.json();
+                    serverTheme = config.theme || null;
+                }
+            } catch (error) {
+                console.log('Could not load theme from server');
+            }
+        }
+
+        const theme = urlConfig.preview && urlConfig.theme
+            ? urlConfig.theme
+            : serverTheme || urlConfig.theme || savedTheme;
+        ThemeManager.init(theme);
 
         if (urlConfig.width) {
             document.documentElement.style.setProperty('--widget-width', urlConfig.width + 'px');
         }
         if (urlConfig.height) {
             document.documentElement.style.setProperty('--widget-height', urlConfig.height + 'px');
+        }
+    },
+
+    startThemePolling() {
+        if (!this.userId || this.isPreview) return;
+
+        this.themePollInterval = setInterval(() => this.syncAppliedTheme(), 5000);
+    },
+
+    async syncAppliedTheme() {
+        try {
+            const response = await fetch(`/api/config/${encodeURIComponent(this.userId)}`);
+            if (!response.ok) return;
+
+            const config = await response.json();
+            if (!config.theme || config.theme === ThemeManager.getTheme()) return;
+
+            const wasPaused = this.elements.widget.classList.contains('is-paused');
+            ThemeManager.setTheme(config.theme);
+
+            if (this.currentTrack) {
+                this.showTrack(this.currentTrack);
+            } else if (wasPaused) {
+                document.body.classList.add('playback-paused');
+            }
+        } catch (error) {
+            console.log('Could not sync theme from server');
         }
     },
 

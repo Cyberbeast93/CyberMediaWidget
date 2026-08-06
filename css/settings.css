@@ -212,6 +212,26 @@ body {
 .theme-btn[data-theme="7days"] { border-left: 3px solid #cc3333; }
 .theme-btn[data-theme="halflife"] { border-left: 3px solid #ff6600; }
 
+.theme-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.theme-status {
+    color: #808080;
+    font-size: 12px;
+}
+
+.theme-status.pending {
+    color: #ffcc00;
+}
+
+.theme-status.applied {
+    color: #00e5ff;
+}
+
 .url-display {
     display: flex;
     gap: 12px;
@@ -292,6 +312,12 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+    transform: none;
 }
 
 .btn-primary {

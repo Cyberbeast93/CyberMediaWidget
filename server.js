@@ -79,6 +79,7 @@ app.get('/api/user/create', (req, res) => {
         spotifyClientSecret: '',
         youtubeApiKey: '',
         redirectUri: '',
+        theme: 'dark',
         createdAt: new Date().toISOString()
     });
     res.json({ userId });
@@ -87,13 +88,18 @@ app.get('/api/user/create', (req, res) => {
 app.get('/api/config/:userId', (req, res) => {
     const { userId } = req.params;
     const config = loadUserConfig(userId);
+    const hasCredentials = !!config.spotifyClientId || !!config.youtubeApiKey;
     
-    if (!config.spotifyClientId && !config.youtubeApiKey) {
-        return res.json({ exists: false });
+    if (!hasCredentials) {
+        return res.json({
+            exists: false,
+            theme: config.theme || ''
+        });
     }
 
     res.json({
         exists: true,
+        theme: config.theme || '',
         spotifyClientId: config.spotifyClientId ? '***' + config.spotifyClientId.slice(-4) : '',
         spotifyClientSecret: config.spotifyClientSecret ? '***' : '',
         youtubeApiKey: config.youtubeApiKey ? '***' + config.youtubeApiKey.slice(-4) : '',
@@ -105,7 +111,7 @@ app.get('/api/config/:userId', (req, res) => {
 
 app.post('/api/config/:userId', (req, res) => {
     const { userId } = req.params;
-    const { spotifyClientId, spotifyClientSecret, youtubeApiKey, redirectUri } = req.body;
+    const { spotifyClientId, spotifyClientSecret, youtubeApiKey, redirectUri, theme } = req.body;
 
     const currentConfig = loadUserConfig(userId);
 
@@ -114,7 +120,8 @@ app.post('/api/config/:userId', (req, res) => {
         spotifyClientId: spotifyClientId !== undefined ? spotifyClientId : currentConfig.spotifyClientId,
         spotifyClientSecret: spotifyClientSecret !== undefined ? spotifyClientSecret : currentConfig.spotifyClientSecret,
         youtubeApiKey: youtubeApiKey !== undefined ? youtubeApiKey : currentConfig.youtubeApiKey,
-        redirectUri: redirectUri || currentConfig.redirectUri
+        redirectUri: redirectUri || currentConfig.redirectUri,
+        theme: theme || currentConfig.theme || 'dark'
     };
 
     if (saveUserConfig(userId, newConfig)) {
