@@ -2,6 +2,7 @@ const SettingsApp = {
     userId: null,
     appliedTheme: 'dark',
     activeApiTab: 'spotify',
+    activeSource: 'spotify',
     settings: {
         theme: 'dark',
         pollInterval: 5
@@ -29,6 +30,8 @@ const SettingsApp = {
             themeGrid: document.getElementById('theme-grid'),
             apiTabs: document.querySelectorAll('.api-tab'),
             apiPanels: document.querySelectorAll('.api-panel'),
+            sourceButtons: document.querySelectorAll('.source-btn'),
+            sourceStatus: document.getElementById('active-source-status'),
             applyTheme: document.getElementById('apply-theme'),
             themeStatus: document.getElementById('theme-status'),
             obsUrl: document.getElementById('obs-url'),
@@ -83,6 +86,10 @@ const SettingsApp = {
     },
 
     bindEvents() {
+        this.elements.sourceButtons.forEach(button => {
+            button.addEventListener('click', () => this.selectSource(button.dataset.source));
+        });
+
         this.elements.apiTabs.forEach(tab => {
             tab.addEventListener('click', () => this.selectApiTab(tab.dataset.apiTab));
         });
@@ -126,6 +133,39 @@ const SettingsApp = {
         });
     },
 
+    async selectSource(source) {
+        if (source === this.activeSource) return;
+
+        try {
+            const response = await fetch(`/api/config/${this.userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ source })
+            });
+
+            if (!response.ok) throw new Error('Source update failed');
+
+            this.activeSource = source;
+            this.updateSourceUI();
+            this.refreshPreview();
+            this.showToast(`${source === 'youtube' ? 'YouTube Music' : 'Spotify'} is now the active source`);
+        } catch (error) {
+            this.showToast('Could not update the active source', true);
+        }
+    },
+
+    updateSourceUI() {
+        const sourceName = this.activeSource === 'youtube' ? 'YouTube Music' : 'Spotify';
+        this.elements.sourceStatus.textContent = sourceName;
+        this.elements.sourceButtons.forEach(button => {
+            const isActive = button.dataset.source === this.activeSource;
+            button.classList.toggle('active', isActive);
+            button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+    },
+
     checkUrlParams() {
         const params = new URLSearchParams(window.location.search);
         const error = params.get('error');
@@ -154,6 +194,7 @@ const SettingsApp = {
                     this.appliedTheme = config.theme;
                     this.settings.theme = config.theme;
                 }
+                this.activeSource = config.source || 'spotify';
                 if (config.exists) {
                     if (config.spotifyClientId) {
                         this.elements.spotifyClientId.value = config.spotifyClientId;
@@ -378,6 +419,8 @@ const SettingsApp = {
 
             this.updateYouTubeStatus(true);
             this.updateServerStatus(true);
+            this.activeSource = 'youtube';
+            this.updateSourceUI();
             this.elements.youtubeAuthCode.hidden = true;
             this.showToast('YouTube Music connected!');
             this.refreshPreview();
@@ -399,6 +442,8 @@ const SettingsApp = {
             if (!response.ok) throw new Error('Disconnect failed');
 
             this.updateYouTubeStatus(false);
+            this.activeSource = 'spotify';
+            this.updateSourceUI();
             this.showToast('YouTube Music disconnected');
             this.refreshPreview();
         } catch (error) {
@@ -429,6 +474,7 @@ const SettingsApp = {
                 pollInterval: 5
             };
             this.appliedTheme = 'dark';
+            this.activeSource = 'spotify';
             
             this.elements.spotifyClientId.value = '';
             this.elements.spotifyClientSecret.value = '';
@@ -448,6 +494,7 @@ const SettingsApp = {
         this.elements.themeGrid.querySelectorAll('.theme-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.theme === this.settings.theme);
         });
+        this.updateSourceUI();
         this.updateThemeStatus();
     },
 

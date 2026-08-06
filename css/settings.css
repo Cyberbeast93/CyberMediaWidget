@@ -301,6 +301,68 @@ body {
     margin-bottom: 20px;
 }
 
+.source-selector {
+    margin: 20px 0;
+    padding: 14px;
+    background: #0f0f1a;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+}
+
+.source-selector-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.source-selector-header h3 {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#active-source-status {
+    color: #00e5ff;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.source-toggle {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.source-btn {
+    padding: 9px 12px;
+    background: #12121e;
+    border: 1px solid #2a2a4a;
+    border-radius: 6px;
+    color: #808080;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.source-btn:hover {
+    color: #ffffff;
+}
+
+.source-btn-spotify.active {
+    background: rgba(29, 185, 84, 0.12);
+    border-color: #1db954;
+    color: #1db954;
+}
+
+.source-btn-youtube.active {
+    background: rgba(255, 0, 0, 0.12);
+    border-color: #ff0000;
+    color: #ff4d4d;
+}
+
 .api-tabs {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

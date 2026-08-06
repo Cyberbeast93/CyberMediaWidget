@@ -20,6 +20,18 @@
                 <h2>API Configuration</h2>
                 <span id="server-status" class="server-status"></span>
 
+                <div class="source-selector">
+                    <div class="source-selector-header">
+                        <h3>Active Source</h3>
+                        <span id="active-source-status">Spotify</span>
+                    </div>
+                    <div class="source-toggle" role="group" aria-label="Active playback source">
+                        <button type="button" class="source-btn source-btn-spotify active" data-source="spotify" aria-pressed="true">Spotify</button>
+                        <button type="button" class="source-btn source-btn-youtube" data-source="youtube" aria-pressed="false">YouTube Music</button>
+                    </div>
+                    <p class="field-hint">Choose which connected service supplies playback data to the OBS widget.</p>
+                </div>
+
                 <div class="api-tabs" role="tablist" aria-label="Music service setup">
                     <button type="button" class="api-tab active" data-api-tab="spotify" role="tab" aria-selected="true" aria-controls="spotify-panel">Spotify</button>
                     <button type="button" class="api-tab" data-api-tab="youtube" role="tab" aria-selected="false" aria-controls="youtube-panel">YouTube Music</button>
