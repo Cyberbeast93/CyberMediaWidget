@@ -391,7 +391,25 @@ const WidgetApp = {
         this.titleOverflowFrame = requestAnimationFrame(() => {
             this.titleOverflowFrame = null;
             const title = this.elements.trackTitle;
-            const overflowDistance = title.scrollWidth - title.clientWidth;
+            const measure = title.cloneNode(true);
+            measure.classList.remove('is-overflowing');
+            measure.style.cssText = [
+                'position: absolute',
+                'left: -99999px',
+                'top: 0',
+                'width: max-content',
+                'max-width: none',
+                'overflow: visible',
+                'text-overflow: clip',
+                'white-space: nowrap',
+                'visibility: hidden',
+                'animation: none',
+                'transform: none'
+            ].join(';');
+            document.body.appendChild(measure);
+
+            const overflowDistance = measure.getBoundingClientRect().width - title.clientWidth;
+            measure.remove();
 
             if (overflowDistance <= 1) return;
 
