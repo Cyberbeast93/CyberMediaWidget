@@ -181,7 +181,6 @@ body:hover .settings-link {
     max-width: none;
     text-overflow: clip;
     will-change: transform;
-    animation: titleMarquee var(--title-scroll-duration, 12s) ease-in-out 0.5s infinite alternate;
 }
 
 .widget-artist {
@@ -266,15 +265,6 @@ body:hover .settings-link {
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-@keyframes titleMarquee {
-    0%, 14% {
-        transform: translateX(0);
-    }
-    86%, 100% {
-        transform: translateX(calc(-1 * var(--title-scroll-distance, 0px)));
     }
 }
 

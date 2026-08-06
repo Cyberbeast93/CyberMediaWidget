@@ -380,6 +380,7 @@ const WidgetApp = {
             this.titleOverflowFrame = null;
         }
 
+        this.stopMarquee();
         this.elements.trackTitle.classList.remove('is-overflowing');
         this.elements.trackTitle.style.removeProperty('--title-scroll-distance');
         this.elements.trackTitle.style.removeProperty('--title-scroll-duration');
@@ -391,13 +392,52 @@ const WidgetApp = {
         const ctx = canvas.getContext('2d');
         const font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
         ctx.font = font;
-        const measured = ctx.measureText(text).width;
-        console.log('[Marquee]', { text, font, measured, client: this.elements.trackTitle.clientWidth });
-        return measured;
+        return ctx.measureText(text).width;
+    },
+
+    startMarquee(overflowDistance) {
+        this.stopMarquee();
+
+        const title = this.elements.trackTitle;
+        const speed = 60;
+        const pauseAtEnd = 2000;
+        const totalDuration = (overflowDistance / speed) * 1000 + pauseAtEnd;
+        const startTime = performance.now();
+
+        const animate = (now) => {
+            this.marqueeFrame = requestAnimationFrame(animate);
+            const elapsed = (now - startTime) % totalDuration;
+            const movePhase = totalDuration - pauseAtEnd;
+            let tx;
+
+            if (elapsed < pauseAtEnd) {
+                tx = 0;
+            } else if (elapsed < movePhase + pauseAtEnd) {
+                const t = (elapsed - pauseAtEnd) / movePhase;
+                tx = -overflowDistance * t;
+            } else {
+                tx = 0;
+            }
+
+            title.style.transform = `translateX(${tx}px)`;
+        };
+
+        this.marqueeFrame = requestAnimationFrame(animate);
+    },
+
+    stopMarquee() {
+        if (this.marqueeFrame) {
+            cancelAnimationFrame(this.marqueeFrame);
+            this.marqueeFrame = null;
+        }
+        if (this.elements.trackTitle) {
+            this.elements.trackTitle.style.transform = '';
+        }
     },
 
     updateTitleOverflow() {
         this.clearTitleOverflow();
+        this.stopMarquee();
 
         this.titleOverflowFrame = requestAnimationFrame(() => {
             this.titleOverflowFrame = null;
@@ -408,10 +448,8 @@ const WidgetApp = {
 
             if (overflowDistance <= 1) return;
 
-            const duration = Math.max(8, Math.min(24, overflowDistance / 18));
-            title.style.setProperty('--title-scroll-distance', `${overflowDistance}px`);
-            title.style.setProperty('--title-scroll-duration', `${duration}s`);
             title.classList.add('is-overflowing');
+            this.startMarquee(overflowDistance);
         });
     },
 
