@@ -56,7 +56,11 @@ body.theme-dynamic-advanced .widget {
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    transition: border-color 0.5s ease, box-shadow 0.5s ease, background 0.5s ease;
+    transition: opacity 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, background 0.5s ease;
+}
+
+body.theme-dynamic-advanced.playback-paused::before {
+    opacity: 0;
 }
 
 body.theme-dynamic-advanced .widget::before {

@@ -32,6 +32,10 @@ body.theme-cyberpunk .widget {
     animation: cyberpunkFlicker 8s infinite;
 }
 
+body.theme-cyberpunk .widget.is-paused {
+    animation: none;
+}
+
 body.theme-cyberpunk .widget::before {
     content: '';
     position: absolute;

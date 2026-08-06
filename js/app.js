@@ -241,6 +241,16 @@ const WidgetApp = {
             return;
         }
 
+        const hasTrackDetails = Boolean(trackData.title || trackData.artist || trackData.artwork);
+        if (!hasTrackDetails) {
+            if (!this.currentTrack) {
+                this.showIdle();
+                return;
+            }
+
+            trackData = { ...this.currentTrack, ...trackData };
+        }
+
         this.currentTrack = trackData;
         this.showTrack(trackData);
 
@@ -275,8 +285,11 @@ const WidgetApp = {
         this.updateProgress(track.progress, track.duration);
         this.updatePlayStatus(track.isPlaying);
 
-        this.elements.widget.classList.add('is-playing');
+        const isPlaying = Boolean(track.isPlaying);
+        this.elements.widget.classList.toggle('is-playing', isPlaying);
+        this.elements.widget.classList.toggle('is-paused', !isPlaying);
         this.elements.widget.classList.remove('is-idle');
+        document.body.classList.toggle('playback-paused', !isPlaying);
     },
 
     showIdle() {
@@ -287,7 +300,9 @@ const WidgetApp = {
         this.elements.totalTime.textContent = '0:00';
         this.elements.playStatus.textContent = '';
         this.elements.widget.classList.remove('is-playing');
+        this.elements.widget.classList.remove('is-paused');
         this.elements.widget.classList.add('is-idle');
+        document.body.classList.remove('playback-paused');
         this.stopProgressUpdate();
     },
 
@@ -302,7 +317,9 @@ const WidgetApp = {
     showSetupInstructions() {
         this.elements.trackTitle.textContent = 'Configure API Keys';
         this.elements.trackArtist.textContent = 'Open settings.html to setup';
+        this.elements.widget.classList.remove('is-paused');
         this.elements.widget.classList.add('is-idle');
+        document.body.classList.remove('playback-paused');
     },
 
     updateSourceIcon(source) {
