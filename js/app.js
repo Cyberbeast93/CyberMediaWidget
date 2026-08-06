@@ -385,31 +385,29 @@ const WidgetApp = {
         this.elements.trackTitle.style.removeProperty('--title-scroll-duration');
     },
 
+    measureTitleWidth(text) {
+        const cs = getComputedStyle(this.elements.trackTitle);
+        const canvas = this.measureCanvas || (this.measureCanvas = document.createElement('canvas'));
+        const ctx = canvas.getContext('2d');
+        const font = [
+            cs.fontStyle,
+            cs.fontWeight,
+            cs.fontSize,
+            cs.fontFamily
+        ].join(' ');
+        ctx.font = font;
+        return ctx.measureText(text).width;
+    },
+
     updateTitleOverflow() {
         this.clearTitleOverflow();
 
         this.titleOverflowFrame = requestAnimationFrame(() => {
             this.titleOverflowFrame = null;
             const title = this.elements.trackTitle;
-            const measure = title.cloneNode(true);
-            measure.classList.remove('is-overflowing');
-            measure.style.cssText = [
-                'position: absolute',
-                'left: -99999px',
-                'top: 0',
-                'width: max-content',
-                'max-width: none',
-                'overflow: visible',
-                'text-overflow: clip',
-                'white-space: nowrap',
-                'visibility: hidden',
-                'animation: none',
-                'transform: none'
-            ].join(';');
-            document.body.appendChild(measure);
-
-            const overflowDistance = measure.getBoundingClientRect().width - title.clientWidth;
-            measure.remove();
+            const text = title.textContent || '';
+            const textWidth = this.measureTitleWidth(text);
+            const overflowDistance = textWidth - title.clientWidth;
 
             if (overflowDistance <= 1) return;
 
