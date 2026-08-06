@@ -63,7 +63,7 @@ Copy the generated URL from settings and add as Browser Source in OBS.
 
 ### YouTube Music Requirement
 
-YouTube playback requires the [YouTube Music Desktop app](https://nuttylmao.notion.site/YouTube-Music-Widget-18d19969b23780e2bb56d25eed4d154e) running on the same computer as OBS. The dashboard connects to its local real-time service; a Google YouTube API key is not required.
+YouTube playback requires the [YouTube Music Desktop app for Windows](https://github.com/ytmdesktop/ytmdesktop/releases/download/v2.0.11/YouTube.Music.Desktop.App-2.0.11.Setup.exe) running on the same computer as OBS. The dashboard connects to its local real-time service.
 
 ## OBS Setup
 
