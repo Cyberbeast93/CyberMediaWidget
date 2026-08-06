@@ -389,14 +389,11 @@ const WidgetApp = {
         const cs = getComputedStyle(this.elements.trackTitle);
         const canvas = this.measureCanvas || (this.measureCanvas = document.createElement('canvas'));
         const ctx = canvas.getContext('2d');
-        const font = [
-            cs.fontStyle,
-            cs.fontWeight,
-            cs.fontSize,
-            cs.fontFamily
-        ].join(' ');
+        const font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
         ctx.font = font;
-        return ctx.measureText(text).width;
+        const measured = ctx.measureText(text).width;
+        console.log('[Marquee]', { text, font, measured, client: this.elements.trackTitle.clientWidth });
+        return measured;
     },
 
     updateTitleOverflow() {
