@@ -20,8 +20,19 @@
                 <h2>API Configuration</h2>
                 <span id="server-status" class="server-status"></span>
 
+                <div class="setup-guide">
+                    <h3>First-time setup</h3>
+                    <ol>
+                        <li>Open the <a href="https://developer.spotify.com/dashboard" target="_blank" class="help-link">Spotify Developer Dashboard</a> and create an app.</li>
+                        <li>Open the app's Settings and add the Redirect URI shown below.</li>
+                        <li>Copy the app's Client ID and Client Secret into the required fields.</li>
+                        <li>Click <strong>Save API Keys</strong>, then click <strong>Connect Spotify</strong> and approve access.</li>
+                    </ol>
+                    <p class="setup-note">Spotify is required for the now-playing widget. YouTube setup is optional.</p>
+                </div>
+
                 <div class="form-group">
-                    <label for="spotify-client-id">Spotify Client ID</label>
+                    <label for="spotify-client-id">Spotify Client ID <span class="required-badge">Required</span></label>
                     <input type="text" id="spotify-client-id" placeholder="Enter your Spotify Client ID">
                     <div class="input-footer">
                         <a href="https://developer.spotify.com/dashboard" target="_blank" class="help-link">Get from Spotify Developer Dashboard</a>
@@ -30,9 +41,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="spotify-client-secret">Spotify Client Secret</label>
+                    <label for="spotify-client-secret">Spotify Client Secret <span class="required-badge">Required</span></label>
                     <input type="password" id="spotify-client-secret" placeholder="Enter your Spotify Client Secret">
                     <a href="https://developer.spotify.com/dashboard" target="_blank" class="help-link">Find in your app settings</a>
+                </div>
+
+                <div class="form-group">
+                    <label for="redirect-uri">Spotify Redirect URI <span class="copy-badge">Copy to Spotify</span></label>
+                    <input type="text" id="redirect-uri" readonly class="readonly-input">
+                    <p class="field-hint">In your Spotify app Settings, find <strong>Redirect URIs</strong>, paste this exact value, and save it.</p>
                 </div>
 
                 <div class="form-group">
@@ -41,16 +58,11 @@
                     <a href="https://console.cloud.google.com" target="_blank" class="help-link">Get from Google Cloud Console</a>
                 </div>
 
-                <div class="form-group">
-                    <label>Add this Redirect URI to your Spotify app</label>
-                    <input type="text" id="redirect-uri" readonly class="readonly-input">
-                    <p class="hint">Copy this into your Spotify app's Redirect URIs</p>
-                </div>
-
                 <div class="button-row">
                     <button id="save-api-keys" class="btn btn-primary">Save API Keys</button>
                     <button id="spotify-auth" class="btn btn-spotify">Connect Spotify</button>
                 </div>
+                <p class="button-hint">Save your keys before connecting Spotify.</p>
 
                 <hr class="divider">
 
