@@ -21,10 +21,6 @@ body.theme-dynamic-advanced {
     --glow-color: var(--dynamic-glow, rgba(0, 229, 255, 0.6));
 }
 
-body.theme-dynamic-advanced {
-    transition: all 0.5s ease;
-}
-
 body.theme-dynamic-advanced::before {
     content: '';
     position: fixed;

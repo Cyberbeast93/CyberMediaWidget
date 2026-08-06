@@ -6,7 +6,7 @@ body.theme-7days {
 
     --title-color: #ff6666;
     --artist-color: #cc3333;
-    --time-color: #993333;
+    --time-color: #ff6666;
 
     --artwork-border: #8b0000;
     --artwork-border-radius: 6px;
@@ -23,7 +23,6 @@ body.theme-7days {
 
 body.theme-7days .widget {
     border-width: 3px;
-    position: relative;
 }
 
 body.theme-7days .widget::before {

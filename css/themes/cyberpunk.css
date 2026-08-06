@@ -28,7 +28,6 @@ body.theme-cyberpunk {
 body.theme-cyberpunk .widget {
     border-width: 3px;
     border-style: solid;
-    position: relative;
     animation: cyberpunkFlicker 8s infinite;
 }
 
@@ -119,7 +118,7 @@ body.theme-cyberpunk .widget-title {
 }
 
 body.theme-cyberpunk .widget-artist {
-    color: #00ffff;
+    color: var(--artist-color);
     text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
     text-transform: uppercase;
     letter-spacing: 2px;

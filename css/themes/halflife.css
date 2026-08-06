@@ -23,7 +23,6 @@ body.theme-halflife {
 
 body.theme-halflife .widget {
     border-width: 2px;
-    position: relative;
 }
 
 body.theme-halflife .widget::before {
@@ -51,7 +50,7 @@ body.theme-halflife .widget-title {
 }
 
 body.theme-halflife .widget-artist {
-    color: #cccccc;
+    color: var(--artist-color);
     text-transform: uppercase;
     font-size: 28px;
     letter-spacing: 2px;

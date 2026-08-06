@@ -66,7 +66,7 @@ body:hover .settings-link {
     background: var(--widget-bg);
     border: 4px solid var(--widget-border);
     box-shadow: none;
-    transition: opacity 0.5s ease, all var(--transition-speed) ease;
+    transition: opacity 0.5s ease, background var(--transition-speed) ease, border-color var(--transition-speed) ease, transform var(--transition-speed) ease;
     isolation: isolate;
     position: relative;
 }
@@ -115,7 +115,7 @@ body:hover .settings-link {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 16px;
+    border-radius: var(--artwork-border-radius, 16px);
     border: 3px solid var(--artwork-border);
     transition: transform var(--transition-speed) ease;
 }
@@ -181,7 +181,7 @@ body:hover .settings-link {
     align-items: center;
     width: 100%;
     font-size: 28px;
-    color: #ffffff;
+    color: var(--time-color, #ffffff);
     font-weight: 500;
     font-variant-numeric: tabular-nums;
     margin-bottom: 8px;
@@ -201,7 +201,7 @@ body:hover .settings-link {
 
 .play-status {
     font-size: 24px;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--status-color, var(--title-color, rgba(255, 255, 255, 0.6)));
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 2px;

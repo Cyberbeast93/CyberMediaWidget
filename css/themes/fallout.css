@@ -28,7 +28,6 @@ body.theme-fallout {
 body.theme-fallout .widget {
     border-style: solid;
     border-width: 3px;
-    position: relative;
 }
 
 body.theme-fallout .widget::before {
@@ -59,11 +58,6 @@ body.theme-fallout .widget-title {
 
 body.theme-fallout .widget-artist {
     text-shadow: 0 0 5px #00cc33;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-body.theme-fallout .widget-artwork img {
-    filter: none;
 }
 
 body.theme-fallout .progress-fill {

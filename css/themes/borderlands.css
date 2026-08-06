@@ -58,7 +58,7 @@ body.theme-borderlands .widget-title {
 }
 
 body.theme-borderlands .widget-artist {
-    color: #ff9933;
+    color: var(--artist-color);
     text-shadow: 1px 1px 0px #000000;
     font-weight: 700;
 }

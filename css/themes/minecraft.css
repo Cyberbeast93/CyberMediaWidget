@@ -5,7 +5,7 @@ body.theme-minecraft {
     --widget-gradient: linear-gradient(135deg, rgba(93, 140, 66, 0.08) 0%, transparent 100%);
 
     --title-color: #ffffff;
-    --artist-color: #555555;
+    --artist-color: #acacac;
     --time-color: #acacac;
 
     --artwork-border: #5d8c42;
@@ -64,7 +64,7 @@ body.theme-minecraft .widget-title {
 }
 
 body.theme-minecraft .widget-artist {
-    color: #acacac;
+    color: var(--artist-color);
     text-shadow: 1px 1px 0px #3f3f3f;
 }
 
@@ -91,7 +91,7 @@ body.theme-minecraft .play-status {
 }
 
 body.theme-minecraft .progress-time {
-    color: #acacac;
+    color: var(--time-color);
 }
 
 body.theme-minecraft .source-icon {
