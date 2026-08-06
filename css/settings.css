@@ -199,6 +199,14 @@ body {
     margin-bottom: 0;
 }
 
+.setup-guide code {
+    padding: 2px 5px;
+    background: #12121e;
+    border-radius: 4px;
+    color: #ffcc00;
+    font-size: 11px;
+}
+
 .setup-note,
 .button-hint,
 .field-hint {
