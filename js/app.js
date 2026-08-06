@@ -295,6 +295,11 @@ const WidgetApp = {
             trackData = { ...this.currentTrack, ...trackData };
         }
 
+        if (this.isPreview && !trackData.isPlaying) {
+            this.showIdle();
+            return;
+        }
+
         this.currentTrack = trackData;
         this.showTrack(trackData);
 
@@ -338,7 +343,9 @@ const WidgetApp = {
 
     showIdle() {
         this.elements.trackTitle.textContent = 'No Track Playing';
-        this.elements.trackArtist.textContent = '--';
+        this.elements.trackArtist.textContent = 'Play music to see it here';
+        this.elements.artwork.src = 'assets/default-artwork.svg';
+        this.elements.artwork.style.display = 'block';
         this.elements.progressFill.style.width = '0%';
         this.elements.currentTime.textContent = '0:00';
         this.elements.totalTime.textContent = '0:00';
@@ -359,6 +366,11 @@ const WidgetApp = {
     },
 
     showSetupInstructions() {
+        if (this.isPreview) {
+            this.showIdle();
+            return;
+        }
+
         this.elements.trackTitle.textContent = 'Configure API Keys';
         this.elements.trackArtist.textContent = 'Open settings.html to setup';
         this.elements.widget.classList.remove('is-paused');
