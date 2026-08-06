@@ -116,6 +116,8 @@ const SettingsApp = {
     },
 
     async loadServerConfig() {
+        this.elements.redirectUri.value = this.getRedirectUri();
+
         try {
             const response = await fetch(`/api/config/${this.userId}`);
             if (response.ok) {
@@ -133,9 +135,6 @@ const SettingsApp = {
                     }
                     if (config.youtubeApiKey) {
                         this.elements.youtubeApiKey.value = config.youtubeApiKey;
-                    }
-                    if (config.redirectUri) {
-                        this.elements.redirectUri.value = config.redirectUri;
                     }
                     this.updateServerStatus(true);
                 } else {
@@ -155,6 +154,10 @@ const SettingsApp = {
         }
     },
 
+    getRedirectUri() {
+        return new URL('/callback', window.location.origin).toString();
+    },
+
     saveSettings() {
         this.settings.pollInterval = parseInt(this.elements.pollInterval.value) || 5;
         localStorage.setItem('cyber-media-settings', JSON.stringify(this.settings));
@@ -168,7 +171,7 @@ const SettingsApp = {
         const clientSecret = this.elements.spotifyClientSecret.value;
         const youtubeKey = this.elements.youtubeApiKey.value;
 
-        const redirectUri = new URL('/callback', window.location.origin).toString();
+        const redirectUri = this.getRedirectUri();
 
         try {
             const response = await fetch(`/api/config/${this.userId}`, {
@@ -309,7 +312,7 @@ const SettingsApp = {
             this.elements.spotifyClientId.value = '';
             this.elements.spotifyClientSecret.value = '';
             this.elements.youtubeApiKey.value = '';
-            this.elements.redirectUri.value = '';
+            this.elements.redirectUri.value = this.getRedirectUri();
             
             this.updateUI();
             this.updateObsUrl();
