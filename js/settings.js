@@ -27,6 +27,8 @@ const SettingsApp = {
             redirectUri: document.getElementById('redirect-uri'),
             pollInterval: document.getElementById('poll-interval'),
             themeGrid: document.getElementById('theme-grid'),
+            apiTabs: document.querySelectorAll('.api-tab'),
+            apiPanels: document.querySelectorAll('.api-panel'),
             applyTheme: document.getElementById('apply-theme'),
             themeStatus: document.getElementById('theme-status'),
             obsUrl: document.getElementById('obs-url'),
@@ -76,6 +78,10 @@ const SettingsApp = {
     },
 
     bindEvents() {
+        this.elements.apiTabs.forEach(tab => {
+            tab.addEventListener('click', () => this.selectApiTab(tab.dataset.apiTab));
+        });
+
         this.elements.themeGrid.addEventListener('click', (e) => {
             if (e.target.classList.contains('theme-btn')) {
                 this.selectTheme(e.target.dataset.theme);
@@ -95,6 +101,18 @@ const SettingsApp = {
                 this.updateSpotifyStatus(true);
                 this.refreshPreview();
             }
+        });
+    },
+
+    selectApiTab(tabName) {
+        this.elements.apiTabs.forEach(tab => {
+            const isActive = tab.dataset.apiTab === tabName;
+            tab.classList.toggle('active', isActive);
+            tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+
+        this.elements.apiPanels.forEach(panel => {
+            panel.hidden = panel.dataset.apiPanel !== tabName;
         });
     },
 
