@@ -26,13 +26,13 @@
                 </div>
 
                 <div id="spotify-panel" class="api-panel" data-api-panel="spotify" role="tabpanel">
-                    <div class="setup-guide">
+                    <div class="setup-guide spotify-guide">
                         <h3>Spotify setup</h3>
                         <ol>
                             <li>Open the <a href="https://developer.spotify.com/dashboard" target="_blank" class="help-link">Spotify Developer Dashboard</a> and create an app.</li>
                             <li>Open the app's Settings and add the Redirect URI shown below.</li>
                             <li>Copy the app's Client ID and Client Secret into the required fields.</li>
-                            <li>Click <strong>Save API Keys</strong>, then click <strong>Connect Spotify</strong> and approve access.</li>
+                            <li>Click <strong>Save Config</strong>, then click <strong>Connect Spotify</strong> and approve access.</li>
                         </ol>
                     </div>
 
@@ -60,7 +60,7 @@
                     <div class="button-row spotify-actions">
                         <button id="spotify-auth" class="btn btn-spotify">Connect Spotify</button>
                     </div>
-                    <p class="button-hint">Save your keys below before connecting Spotify.</p>
+                    <p class="button-hint">Save Config before connecting Spotify.</p>
                 </div>
 
                 <div id="youtube-panel" class="api-panel" data-api-panel="youtube" role="tabpanel" hidden>
@@ -73,7 +73,7 @@
                             <li>When Google asks <strong>What data will you be accessing?</strong>, choose <strong>Public data</strong>, not <strong>User data</strong>, then click <strong>Next</strong>. User data starts an OAuth setup and is not needed here.</li>
                             <li>Under <strong>Key restrictions</strong>, choose <strong>Websites</strong>, add <code>https://cy8ermedia.duckdns.org/*</code>, and do not leave the application restriction set to <strong>None</strong>.</li>
                             <li>Under <strong>API restrictions</strong>, choose <strong>Restrict key</strong>, select <strong>YouTube Data API v3</strong>, and save the key.</li>
-                            <li>Copy the finished key into the field below, then click <strong>Save API Keys</strong>.</li>
+                            <li>Copy the finished key into the field below, then click <strong>Save API</strong>.</li>
                         </ol>
                         <p class="setup-note">For security, restrict the key to YouTube Data API v3. This key is optional and is only needed for YouTube or YouTube Music metadata.</p>
                     </div>
@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="api-actions">
-                    <button id="save-api-keys" class="btn btn-primary">Save API Keys</button>
+                    <button id="save-api-keys" class="btn btn-primary">Save Config</button>
                     <span class="api-save-note">Saves your Spotify and YouTube settings.</span>
                 </div>
 

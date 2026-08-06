@@ -183,6 +183,24 @@ body {
     font-weight: 600;
 }
 
+.spotify-guide {
+    background: rgba(29, 185, 84, 0.05);
+    border-left-color: #1db954;
+}
+
+.spotify-guide h3 {
+    color: #1db954;
+}
+
+.youtube-guide {
+    background: rgba(255, 0, 0, 0.05);
+    border-left-color: #ff0000;
+}
+
+.youtube-guide h3 {
+    color: #ff4d4d;
+}
+
 .setup-guide ol {
     margin: 0;
     padding-left: 20px;
@@ -277,10 +295,20 @@ body {
     color: #ffffff;
 }
 
+.api-tab[data-api-tab="spotify"] {
+    --api-tab-color: #1db954;
+    --api-tab-background: rgba(29, 185, 84, 0.12);
+}
+
+.api-tab[data-api-tab="youtube"] {
+    --api-tab-color: #ff0000;
+    --api-tab-background: rgba(255, 0, 0, 0.12);
+}
+
 .api-tab.active {
-    background: rgba(0, 229, 255, 0.1);
-    border-color: #00e5ff;
-    color: #00e5ff;
+    background: var(--api-tab-background, rgba(0, 229, 255, 0.1));
+    border-color: var(--api-tab-color, #00e5ff);
+    color: var(--api-tab-color, #00e5ff);
 }
 
 .api-panel[hidden] {

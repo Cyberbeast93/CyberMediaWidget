@@ -1,6 +1,7 @@
 const SettingsApp = {
     userId: null,
     appliedTheme: 'dark',
+    activeApiTab: 'spotify',
     settings: {
         theme: 'dark',
         pollInterval: 5
@@ -105,6 +106,9 @@ const SettingsApp = {
     },
 
     selectApiTab(tabName) {
+        this.activeApiTab = tabName;
+        this.elements.saveApiKeys.textContent = tabName === 'youtube' ? 'Save API' : 'Save Config';
+
         this.elements.apiTabs.forEach(tab => {
             const isActive = tab.dataset.apiTab === tabName;
             tab.classList.toggle('active', isActive);
@@ -207,7 +211,9 @@ const SettingsApp = {
 
             if (response.ok) {
                 this.elements.redirectUri.value = redirectUri;
-                this.showToast('API keys saved to server!');
+                this.showToast(this.activeApiTab === 'youtube'
+                    ? 'YouTube API saved to server!'
+                    : 'Configuration saved to server!');
                 this.updateServerStatus(true);
             } else {
                 this.showToast('Failed to save to server', true);
