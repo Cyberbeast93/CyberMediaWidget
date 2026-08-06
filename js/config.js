@@ -8,10 +8,6 @@ const CONFIG = {
         authUrl: 'https://accounts.spotify.com/authorize',
         apiBase: 'https://api.spotify.com/v1'
     },
-    youtube: {
-        apiKey: localStorage.getItem('youtube-api-key') || '',
-        apiBase: 'https://www.googleapis.com/youtube/v3'
-    },
     polling: {
         interval: (parseInt(localStorage.getItem('poll-interval')) || 5) * 1000
     },
@@ -26,7 +22,7 @@ function getConfigFromUrl() {
     return {
         theme: params.get('theme'),
         preview: params.get('preview') === '1',
-        source: params.get('source') || CONFIG.defaults.source,
+        source: params.get('source'),
         user: params.get('user'),
         width: params.get('width'),
         height: params.get('height')

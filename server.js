@@ -78,6 +78,8 @@ app.get('/api/user/create', (req, res) => {
         spotifyClientId: '',
         spotifyClientSecret: '',
         youtubeApiKey: '',
+        youtubeDesktopToken: '',
+        source: 'spotify',
         redirectUri: '',
         theme: 'dark',
         createdAt: new Date().toISOString()
@@ -88,18 +90,22 @@ app.get('/api/user/create', (req, res) => {
 app.get('/api/config/:userId', (req, res) => {
     const { userId } = req.params;
     const config = loadUserConfig(userId);
-    const hasCredentials = !!config.spotifyClientId || !!config.youtubeApiKey;
+    const hasCredentials = !!config.spotifyClientId || !!config.youtubeApiKey || !!config.youtubeDesktopToken;
     
     if (!hasCredentials) {
         return res.json({
             exists: false,
-            theme: config.theme || ''
+            theme: config.theme || '',
+            source: config.source || '',
+            hasYouTubeDesktop: false
         });
     }
 
     res.json({
         exists: true,
         theme: config.theme || '',
+        source: config.source || 'spotify',
+        hasYouTubeDesktop: !!config.youtubeDesktopToken,
         spotifyClientId: config.spotifyClientId ? '***' + config.spotifyClientId.slice(-4) : '',
         spotifyClientSecret: config.spotifyClientSecret ? '***' : '',
         youtubeApiKey: config.youtubeApiKey ? '***' + config.youtubeApiKey.slice(-4) : '',
@@ -111,7 +117,7 @@ app.get('/api/config/:userId', (req, res) => {
 
 app.post('/api/config/:userId', (req, res) => {
     const { userId } = req.params;
-    const { spotifyClientId, spotifyClientSecret, youtubeApiKey, redirectUri, theme } = req.body;
+    const { spotifyClientId, spotifyClientSecret, youtubeApiKey, redirectUri, theme, source } = req.body;
 
     const currentConfig = loadUserConfig(userId);
 
@@ -121,7 +127,8 @@ app.post('/api/config/:userId', (req, res) => {
         spotifyClientSecret: spotifyClientSecret !== undefined ? spotifyClientSecret : currentConfig.spotifyClientSecret,
         youtubeApiKey: youtubeApiKey !== undefined ? youtubeApiKey : currentConfig.youtubeApiKey,
         redirectUri: redirectUri || currentConfig.redirectUri,
-        theme: theme || currentConfig.theme || 'dark'
+        theme: theme || currentConfig.theme || 'dark',
+        source: source || currentConfig.source || 'spotify'
     };
 
     if (saveUserConfig(userId, newConfig)) {
@@ -150,6 +157,44 @@ app.get('/api/tokens/:userId', (req, res) => {
     });
 });
 
+app.get('/api/youtube/token/:userId', (req, res) => {
+    const { userId } = req.params;
+    const config = loadUserConfig(userId);
+    res.json({ token: config.youtubeDesktopToken || null });
+});
+
+app.post('/api/youtube/token/:userId', (req, res) => {
+    const { userId } = req.params;
+    const { token } = req.body;
+
+    if (!token || typeof token !== 'string') {
+        return res.status(400).json({ error: 'A YouTube Desktop token is required' });
+    }
+
+    const config = loadUserConfig(userId);
+    config.youtubeDesktopToken = token;
+    config.source = 'youtube';
+
+    if (saveUserConfig(userId, config)) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ error: 'Failed to save YouTube Desktop token' });
+    }
+});
+
+app.delete('/api/youtube/token/:userId', (req, res) => {
+    const { userId } = req.params;
+    const config = loadUserConfig(userId);
+    delete config.youtubeDesktopToken;
+    config.source = 'spotify';
+
+    if (saveUserConfig(userId, config)) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ error: 'Failed to disconnect YouTube Music Desktop' });
+    }
+});
+
 app.get('/auth/spotify', (req, res) => {
     const { userId } = req.query;
     const config = loadUserConfig(userId);
@@ -158,6 +203,10 @@ app.get('/auth/spotify', (req, res) => {
     if (!clientId) {
         return res.redirect(`/settings.html?user=${userId}&error=no_client_id`);
     }
+
+    const updatedConfig = loadUserConfig(userId);
+    updatedConfig.source = 'spotify';
+    saveUserConfig(userId, updatedConfig);
 
     const scopes = [
         'user-read-currently-playing',

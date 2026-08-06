@@ -202,12 +202,14 @@ const WidgetApp = {
         this.isPreview = urlConfig.preview;
 
         let serverTheme = null;
+        let serverSource = null;
         if (this.userId) {
             try {
                 const response = await fetch(`/api/config/${encodeURIComponent(this.userId)}`);
                 if (response.ok) {
                     const config = await response.json();
                     serverTheme = config.theme || null;
+                    serverSource = config.source || null;
                 }
             } catch (error) {
                 console.log('Could not load theme from server');
@@ -217,6 +219,9 @@ const WidgetApp = {
         const theme = urlConfig.preview && urlConfig.theme
             ? urlConfig.theme
             : serverTheme || urlConfig.theme || savedTheme;
+        this.source = urlConfig.preview && urlConfig.source
+            ? urlConfig.source
+            : serverSource || urlConfig.source || CONFIG.defaults.source;
         ThemeManager.init(theme);
 
         if (urlConfig.width) {
@@ -243,6 +248,12 @@ const WidgetApp = {
             if (!response.ok) return;
 
             const config = await response.json();
+            const configuredSource = config.source || CONFIG.defaults.source;
+            if (configuredSource !== this.source) {
+                window.location.reload();
+                return;
+            }
+
             if (!config.theme || config.theme === ThemeManager.getTheme()) return;
 
             const wasPaused = this.elements.widget.classList.contains('is-paused');
@@ -259,10 +270,19 @@ const WidgetApp = {
     },
 
     async checkAuth() {
-        await SpotifyAPI.init(this.userId);
-        YouTubeAPI.init();
+        if (this.source === 'youtube') {
+            SpotifyAPI.stopPolling();
+            await YouTubeAPI.init(this.userId);
+        } else {
+            YouTubeAPI.disconnect(false);
+            await SpotifyAPI.init(this.userId);
+        }
 
-        if (SpotifyAPI.isAuthenticated() || YouTubeAPI.isAuthenticated()) {
+        const isAuthenticated = this.source === 'youtube'
+            ? YouTubeAPI.isAuthenticated()
+            : SpotifyAPI.isAuthenticated();
+
+        if (isAuthenticated) {
             if (window.opener) {
                 window.opener.postMessage('spotify-connected', '*');
             }
@@ -438,8 +458,8 @@ const WidgetApp = {
     },
 
     getSource() {
-        return SpotifyAPI.isAuthenticated() ? 'spotify' :
-               YouTubeAPI.isAuthenticated() ? 'youtube' : null;
+        return this.source === 'youtube' && YouTubeAPI.isAuthenticated() ? 'youtube' :
+               this.source === 'spotify' && SpotifyAPI.isAuthenticated() ? 'spotify' : null;
     }
 };
 

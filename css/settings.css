@@ -111,17 +111,6 @@ body {
     color: #4a4a6a;
 }
 
-.optional-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    background: #2a2a4a;
-    border-radius: 4px;
-    font-size: 11px;
-    color: #808080;
-    font-weight: 500;
-    margin-left: 8px;
-}
-
 .input-footer {
     display: flex;
     justify-content: space-between;
@@ -201,6 +190,58 @@ body {
     color: #ff4d4d;
 }
 
+.youtube-connection {
+    padding: 14px;
+    background: rgba(255, 0, 0, 0.04);
+    border: 1px solid rgba(255, 0, 0, 0.25);
+    border-radius: 8px;
+}
+
+.youtube-desktop-status {
+    margin-bottom: 12px;
+    color: #ff8080;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.youtube-desktop-status.connected {
+    color: #1db954;
+}
+
+.youtube-auth-code {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+    padding: 12px;
+    background: #12121e;
+    border-radius: 6px;
+    color: #c0c0c0;
+    font-size: 12px;
+    text-align: center;
+}
+
+.youtube-auth-code strong {
+    color: #ff0000;
+    font-size: 28px;
+    letter-spacing: 6px;
+}
+
+.youtube-auth-code p {
+    margin: 0;
+    color: #808080;
+    line-height: 1.4;
+}
+
+.youtube-connection-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.youtube-connection-actions .btn {
+    flex: 1;
+}
+
 .setup-guide ol {
     margin: 0;
     padding-left: 20px;
@@ -215,14 +256,6 @@ body {
 
 .setup-guide li:last-child {
     margin-bottom: 0;
-}
-
-.setup-guide code {
-    padding: 2px 5px;
-    background: #12121e;
-    border-radius: 4px;
-    color: #ffcc00;
-    font-size: 11px;
 }
 
 .setup-note,
@@ -534,6 +567,15 @@ body {
 
 .btn-spotify:hover {
     background: #1ed760;
+}
+
+.btn-youtube {
+    background: #ff0000;
+    color: #ffffff;
+}
+
+.btn-youtube:hover {
+    background: #cc0000;
 }
 
 .btn-danger {

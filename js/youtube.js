@@ -1,127 +1,125 @@
 const YouTubeAPI = {
-    apiKey: null,
-    currentVideo: null,
-    pollInterval: null,
+    userId: null,
+    token: null,
+    socket: null,
+    reconnectTimer: null,
+    connected: false,
 
-    init() {
-        this.apiKey = CONFIG.youtube.apiKey || localStorage.getItem('youtube-api-key');
-        if (this.apiKey) {
-            this.startPolling();
+    async init(userId) {
+        this.userId = userId;
+        await this.loadToken();
+
+        if (this.token) {
+            this.connect();
         }
     },
 
-    setApiKey(key) {
-        this.apiKey = key;
-        localStorage.setItem('youtube-api-key', key);
-        if (key) {
-            this.startPolling();
-        } else {
-            this.stopPolling();
-        }
-    },
-
-    getApiKey() {
-        return this.apiKey;
-    },
-
-    async searchVideos(query, maxResults = 10) {
-        if (!this.apiKey) return [];
+    async loadToken() {
+        if (!this.userId) return;
 
         try {
-            const params = new URLSearchParams({
-                part: 'snippet',
-                q: query,
-                type: 'video',
-                maxResults: maxResults,
-                key: this.apiKey
-            });
-
-            const response = await fetch(`${CONFIG.youtube.apiBase}/search?${params}`);
-            if (!response.ok) throw new Error('Search failed');
-
-            const data = await response.json();
-            return data.items || [];
+            const response = await fetch(`/api/youtube/token/${encodeURIComponent(this.userId)}`);
+            if (response.ok) {
+                const data = await response.json();
+                this.token = data.token || null;
+            }
         } catch (error) {
-            console.error('YouTube search error:', error);
-            return [];
+            console.log('Could not load YouTube Music Desktop token');
         }
     },
 
-    async getVideoDetails(videoId) {
-        if (!this.apiKey || !videoId) return null;
+    connect() {
+        if (!this.token || typeof window.io !== 'function') return;
 
-        try {
-            const params = new URLSearchParams({
-                part: 'snippet,contentDetails',
-                id: videoId,
-                key: this.apiKey
-            });
+        this.clearReconnectTimer();
+        this.disconnect(false);
 
-            const response = await fetch(`${CONFIG.youtube.apiBase}/videos?${params}`);
-            if (!response.ok) throw new Error('Get video failed');
+        this.socket = window.io('http://localhost:9863/api/v1/realtime', {
+            transports: ['websocket'],
+            auth: {
+                token: this.token
+            },
+            reconnection: false
+        });
 
-            const data = await response.json();
-            if (data.items && data.items.length > 0) {
-                return this.parseVideoData(data.items[0]);
+        this.socket.on('connect', () => {
+            this.connected = true;
+        });
+
+        this.socket.on('state-update', (state) => {
+            const trackData = this.parseState(state);
+            if (window.WidgetApp) {
+                window.WidgetApp.updateDisplay(trackData);
             }
-            return null;
-        } catch (error) {
-            console.error('Get video details error:', error);
-            return null;
-        }
-    },
+        });
 
-    parseVideoData(video) {
-        const snippet = video.snippet;
-        const contentDetails = video.contentDetails;
-        const duration = this.parseDuration(contentDetails.duration);
+        this.socket.on('disconnect', () => {
+            this.connected = false;
+            this.scheduleReconnect();
+        });
 
-        return {
-            isPlaying: true,
-            title: snippet.title,
-            artist: snippet.channelTitle,
-            artwork: snippet.thumbnails?.high?.url || snippet.thumbnails?.default?.url || '',
-            progress: 0,
-            duration: duration,
-            source: 'youtube',
-            videoId: video.id
-        };
-    },
-
-    parseDuration(iso8601Duration) {
-        const match = iso8601Duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-        if (!match) return 0;
-
-        const hours = parseInt(match[1] || '0');
-        const minutes = parseInt(match[2] || '0');
-        const seconds = parseInt(match[3] || '0');
-
-        return (hours * 3600 + minutes * 60 + seconds) * 1000;
-    },
-
-    setCurrentlyPlaying(videoId) {
-        this.getVideoDetails(videoId).then(data => {
-            if (data) {
-                this.currentVideo = data;
-                if (window.WidgetApp) {
-                    window.WidgetApp.updateDisplay(data);
-                }
-            }
+        this.socket.on('connect_error', () => {
+            this.connected = false;
+            this.scheduleReconnect();
         });
     },
 
-    startPolling() {
-        this.stopPolling();
+    parseState(state) {
+        const player = state?.player;
+        const video = state?.video;
+        const trackState = Number(player?.trackState);
+
+        if (!video) {
+            return { isPlaying: trackState === 1 };
+        }
+
+        const thumbnails = Array.isArray(video.thumbnails) ? video.thumbnails : [];
+        const artwork = thumbnails.length > 0 ? thumbnails[thumbnails.length - 1].url : '';
+        const duration = Number(video.durationSeconds || 0) * 1000;
+        const progress = Number(player?.videoProgress || 0) * 1000;
+
+        return {
+            isPlaying: trackState === 1,
+            title: video.title || 'Unknown Track',
+            artist: video.author || 'Unknown Artist',
+            artwork,
+            progress,
+            duration,
+            source: 'youtube',
+            videoId: video.videoId || video.id || null
+        };
     },
 
-    stopPolling() {
-        if (this.pollInterval) {
-            clearInterval(this.pollInterval);
-            this.pollInterval = null;
+    scheduleReconnect() {
+        if (this.reconnectTimer || !this.token) return;
+
+        this.reconnectTimer = setTimeout(() => {
+            this.reconnectTimer = null;
+            this.connect();
+        }, 5000);
+    },
+
+    clearReconnectTimer() {
+        if (this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = null;
         }
     },
 
+    disconnect(clearToken = true) {
+        this.clearReconnectTimer();
+
+        if (this.socket) {
+            this.socket.removeAllListeners();
+            this.socket.disconnect();
+            this.socket = null;
+        }
+
+        this.connected = false;
+        if (clearToken) this.token = null;
+    },
+
     isAuthenticated() {
-        return !!this.apiKey;
+        return !!this.token;
     }
 };

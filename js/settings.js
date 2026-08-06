@@ -24,7 +24,6 @@ const SettingsApp = {
         this.elements = {
             spotifyClientId: document.getElementById('spotify-client-id'),
             spotifyClientSecret: document.getElementById('spotify-client-secret'),
-            youtubeApiKey: document.getElementById('youtube-api-key'),
             redirectUri: document.getElementById('redirect-uri'),
             pollInterval: document.getElementById('poll-interval'),
             themeGrid: document.getElementById('theme-grid'),
@@ -38,6 +37,11 @@ const SettingsApp = {
             saveSettings: document.getElementById('save-settings'),
             saveApiKeys: document.getElementById('save-api-keys'),
             spotifyAuth: document.getElementById('spotify-auth'),
+            youtubeConnect: document.getElementById('youtube-connect'),
+            youtubeDisconnect: document.getElementById('youtube-disconnect'),
+            youtubeStatus: document.getElementById('youtube-desktop-status'),
+            youtubeAuthCode: document.getElementById('youtube-auth-code'),
+            youtubeAuthCodeValue: document.getElementById('youtube-auth-code-value'),
             resetSettings: document.getElementById('reset-settings'),
             previewFrame: document.getElementById('preview-frame'),
             spotifyStatus: document.getElementById('spotify-status'),
@@ -95,6 +99,8 @@ const SettingsApp = {
         this.elements.saveSettings.addEventListener('click', () => this.saveSettings());
         this.elements.saveApiKeys.addEventListener('click', () => this.saveApiKeys());
         this.elements.spotifyAuth.addEventListener('click', () => this.connectSpotify());
+        this.elements.youtubeConnect.addEventListener('click', () => this.connectYouTube());
+        this.elements.youtubeDisconnect.addEventListener('click', () => this.disconnectYouTube());
         this.elements.resetSettings.addEventListener('click', () => this.resetSettings());
 
         window.addEventListener('message', (e) => {
@@ -107,7 +113,7 @@ const SettingsApp = {
 
     selectApiTab(tabName) {
         this.activeApiTab = tabName;
-        this.elements.saveApiKeys.textContent = tabName === 'youtube' ? 'Save API' : 'Save Config';
+        this.elements.saveApiKeys.textContent = 'Save Config';
 
         this.elements.apiTabs.forEach(tab => {
             const isActive = tab.dataset.apiTab === tabName;
@@ -155,17 +161,17 @@ const SettingsApp = {
                     if (config.spotifyClientSecret) {
                         this.elements.spotifyClientSecret.value = config.spotifyClientSecret;
                     }
-                    if (config.youtubeApiKey) {
-                        this.elements.youtubeApiKey.value = config.youtubeApiKey;
-                    }
                     this.updateServerStatus(true);
                 } else {
                     this.updateServerStatus(false);
                 }
+
+                this.updateYouTubeStatus(!!config.hasYouTubeDesktop);
             }
         } catch (error) {
             console.log('No server config found or server not running');
             this.updateServerStatus(false);
+            this.updateYouTubeStatus(false);
         }
     },
 
@@ -191,7 +197,6 @@ const SettingsApp = {
     async saveApiKeys() {
         const clientId = this.elements.spotifyClientId.value;
         const clientSecret = this.elements.spotifyClientSecret.value;
-        const youtubeKey = this.elements.youtubeApiKey.value;
 
         const redirectUri = this.getRedirectUri();
 
@@ -204,16 +209,13 @@ const SettingsApp = {
                 body: JSON.stringify({
                     spotifyClientId: clientId,
                     spotifyClientSecret: clientSecret,
-                    youtubeApiKey: youtubeKey,
                     redirectUri: redirectUri
                 })
             });
 
             if (response.ok) {
                 this.elements.redirectUri.value = redirectUri;
-                this.showToast(this.activeApiTab === 'youtube'
-                    ? 'YouTube API saved to server!'
-                    : 'Configuration saved to server!');
+                this.showToast('Configuration saved to server!');
                 this.updateServerStatus(true);
             } else {
                 this.showToast('Failed to save to server', true);
@@ -318,6 +320,101 @@ const SettingsApp = {
         window.location.href = `/auth/spotify?userId=${this.userId}`;
     },
 
+    async connectYouTube() {
+        const bridgeUrl = 'http://localhost:9863';
+        const appInfo = {
+            appId: 'cyber-media-widget',
+            appName: 'Cyber Media Widget',
+            appVersion: '1.0.0'
+        };
+
+        this.elements.youtubeConnect.disabled = true;
+        this.elements.youtubeStatus.textContent = 'Requesting connection code...';
+        this.elements.youtubeAuthCode.hidden = true;
+
+        try {
+            const codeResponse = await fetch(`${bridgeUrl}/api/v1/auth/requestcode`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(appInfo)
+            });
+            const codeData = await codeResponse.json();
+
+            if (!codeResponse.ok || codeData.statusCode || !codeData.code) {
+                throw new Error(codeData.message || 'YouTube Music Desktop is not available');
+            }
+
+            this.elements.youtubeAuthCodeValue.textContent = codeData.code;
+            this.elements.youtubeAuthCode.hidden = false;
+            this.elements.youtubeStatus.textContent = 'Waiting for desktop app approval...';
+
+            const tokenResponse = await fetch(`${bridgeUrl}/api/v1/auth/request`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    appId: appInfo.appId,
+                    code: codeData.code
+                })
+            });
+            const tokenData = await tokenResponse.json();
+
+            if (!tokenResponse.ok || tokenData.statusCode || !tokenData.token) {
+                throw new Error(tokenData.message || 'Desktop app approval failed');
+            }
+
+            const saveResponse = await fetch(`/api/youtube/token/${this.userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ token: tokenData.token })
+            });
+
+            if (!saveResponse.ok) throw new Error('Could not save the desktop connection');
+
+            this.updateYouTubeStatus(true);
+            this.updateServerStatus(true);
+            this.elements.youtubeAuthCode.hidden = true;
+            this.showToast('YouTube Music connected!');
+            this.refreshPreview();
+        } catch (error) {
+            this.updateYouTubeStatus(false);
+            this.elements.youtubeAuthCode.hidden = true;
+            const message = error instanceof TypeError
+                ? 'Could not reach YouTube Music Desktop. Make sure it is installed and running on this computer.'
+                : error.message || 'Could not connect to YouTube Music Desktop';
+            this.showToast(message, true);
+        } finally {
+            this.elements.youtubeConnect.disabled = false;
+        }
+    },
+
+    async disconnectYouTube() {
+        try {
+            const response = await fetch(`/api/youtube/token/${this.userId}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Disconnect failed');
+
+            this.updateYouTubeStatus(false);
+            this.showToast('YouTube Music disconnected');
+            this.refreshPreview();
+        } catch (error) {
+            this.showToast('Could not disconnect YouTube Music', true);
+        }
+    },
+
+    updateYouTubeStatus(connected) {
+        if (!this.elements.youtubeStatus) return;
+
+        this.elements.youtubeStatus.textContent = connected ? 'Connected to YouTube Music Desktop' : 'Not connected';
+        this.elements.youtubeStatus.className = `youtube-desktop-status ${connected ? 'connected' : ''}`;
+        this.elements.youtubeConnect.textContent = connected ? 'Reconnect YouTube Music' : 'Connect YouTube Music';
+        this.elements.youtubeDisconnect.hidden = !connected;
+    },
+
     async resetSettings() {
         if (confirm('Are you sure you want to reset all settings? This will delete your credentials from the server.')) {
             try {
@@ -335,13 +432,13 @@ const SettingsApp = {
             
             this.elements.spotifyClientId.value = '';
             this.elements.spotifyClientSecret.value = '';
-            this.elements.youtubeApiKey.value = '';
             this.elements.redirectUri.value = this.getRedirectUri();
             
             this.updateUI();
             this.updateObsUrl();
             this.refreshPreview();
             this.updateSpotifyStatus(false);
+            this.updateYouTubeStatus(false);
             this.showToast('Settings reset to defaults');
         }
     },

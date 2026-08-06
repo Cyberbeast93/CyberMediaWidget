@@ -5,7 +5,7 @@ A customizable OBS stream overlay widget that displays currently playing tracks 
 ## Features
 
 - **Spotify Integration** - Shows currently playing track with album art, artist, and progress bar
-- **YouTube Integration** - Display YouTube video info with thumbnails
+- **YouTube Music Desktop Integration** - Real-time playback state through the local desktop app
 - **12 Gaming Themes** - Dark, Light, Neon, Nord, Fallout, Borderlands, 7 Days to Die, Half-Life, Minecraft, Cyberpunk, Dynamic, Dynamic Advanced
 - **OBS Ready** - Transparent background, configurable size, works as Browser Source
 - **Keyboard Shortcuts** - Press 'T' to cycle themes, double-click widget to change theme
@@ -60,6 +60,10 @@ Production settings: `https://cy8ermedia.duckdns.org/settings.html`
 ### 5. Get OBS URL
 
 Copy the generated URL from settings and add as Browser Source in OBS.
+
+### YouTube Music Requirement
+
+YouTube playback requires the [YouTube Music Desktop app](https://nuttylmao.notion.site/YouTube-Music-Widget-18d19969b23780e2bb56d25eed4d154e) running on the same computer as OBS. The dashboard connects to its local real-time service; a Google YouTube API key is not required.
 
 ## OBS Setup
 

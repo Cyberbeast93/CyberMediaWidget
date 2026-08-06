@@ -65,29 +65,33 @@
 
                 <div id="youtube-panel" class="api-panel" data-api-panel="youtube" role="tabpanel" hidden>
                     <div class="setup-guide youtube-guide">
-                        <h3>YouTube Music setup</h3>
+                        <h3>YouTube Music Desktop setup</h3>
                         <ol>
-                            <li>Open <a href="https://console.cloud.google.com" target="_blank" class="help-link">Google Cloud Console</a> and create or select a project.</li>
-                            <li>Open <strong>APIs &amp; Services</strong> &gt; <strong>Library</strong>, search for <strong>YouTube Data API v3</strong>, and click <strong>Enable</strong>.</li>
-                            <li>Open <strong>APIs &amp; Services</strong> &gt; <strong>Credentials</strong> and choose <strong>Create Credentials</strong>.</li>
-                            <li>When Google asks <strong>What data will you be accessing?</strong>, choose <strong>Public data</strong>, not <strong>User data</strong>, then click <strong>Next</strong>. User data starts an OAuth setup and is not needed here.</li>
-                            <li>Under <strong>Key restrictions</strong>, choose <strong>Websites</strong>, add <code>https://cy8ermedia.duckdns.org/*</code>, and do not leave the application restriction set to <strong>None</strong>.</li>
-                            <li>Under <strong>API restrictions</strong>, choose <strong>Restrict key</strong>, select <strong>YouTube Data API v3</strong>, and save the key.</li>
-                            <li>Copy the finished key into the field below, then click <strong>Save API</strong>.</li>
+                            <li>Install and sign in to the required <a href="https://nuttylmao.notion.site/YouTube-Music-Widget-18d19969b23780e2bb56d25eed4d154e" target="_blank" class="help-link">YouTube Music Desktop app</a>.</li>
+                            <li>Keep the desktop app running on the same computer as OBS.</li>
+                            <li>Click <strong>Connect YouTube Music</strong> below and approve the connection code in the desktop app.</li>
+                            <li>Keep the app open while using the widget. Playback updates arrive in real time through the local connection.</li>
                         </ol>
-                        <p class="setup-note">For security, restrict the key to YouTube Data API v3. This key is optional and is only needed for YouTube or YouTube Music metadata.</p>
+                        <p class="setup-note">A Google API key is not required. This connection reads playback state from the desktop app running locally.</p>
                     </div>
 
-                    <div class="form-group">
-                        <label for="youtube-api-key">YouTube Data API Key <span class="optional-badge">Optional</span></label>
-                        <input type="text" id="youtube-api-key" placeholder="Paste your Google API key">
-                        <a href="https://console.cloud.google.com" target="_blank" class="help-link">Open Google Cloud Console</a>
+                    <div class="youtube-connection">
+                        <div id="youtube-desktop-status" class="youtube-desktop-status">Not connected</div>
+                        <div id="youtube-auth-code" class="youtube-auth-code" hidden>
+                            <span>Connection code</span>
+                            <strong id="youtube-auth-code-value">----</strong>
+                            <p>Enter this code in YouTube Music Desktop, then leave this page open.</p>
+                        </div>
+                        <div class="youtube-connection-actions">
+                            <button id="youtube-connect" class="btn btn-youtube">Connect YouTube Music</button>
+                            <button id="youtube-disconnect" class="btn btn-secondary" hidden>Disconnect</button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="api-actions">
                     <button id="save-api-keys" class="btn btn-primary">Save Config</button>
-                    <span class="api-save-note">Saves your Spotify and YouTube settings.</span>
+                    <span class="api-save-note">Saves Spotify configuration. YouTube connection saves automatically.</span>
                 </div>
 
                 <hr class="divider">
