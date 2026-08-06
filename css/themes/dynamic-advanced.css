@@ -21,19 +21,14 @@ body.theme-dynamic-advanced {
     --glow-color: var(--dynamic-glow, rgba(0, 229, 255, 0.6));
 }
 
-body.theme-dynamic-advanced::before {
-    content: '';
-    position: fixed;
-    top: -50%;
-    left: -50%;
-    right: -50%;
-    bottom: -50%;
+body.theme-dynamic-advanced .widget-background {
+    display: block;
     background-image: var(--dynamic-artwork-url, none);
     background-size: cover;
     background-position: center;
     filter: blur(25px) saturate(1.5);
     opacity: 0.3;
-    z-index: -1;
+    clip-path: inset(0 round var(--border-radius));
     transition: background-image 0.5s ease, opacity 0.5s ease;
     animation: dynamicBgPan 20s ease-in-out infinite alternate;
 }
@@ -55,7 +50,7 @@ body.theme-dynamic-advanced .widget {
     transition: opacity 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, background 0.5s ease;
 }
 
-body.theme-dynamic-advanced.playback-paused::before {
+body.theme-dynamic-advanced.playback-paused .widget-background {
     opacity: 0;
 }
 

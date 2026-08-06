@@ -99,6 +99,16 @@ body:hover .settings-link {
     z-index: 1;
 }
 
+.widget-background {
+    display: none;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
 .widget.is-paused {
     opacity: 0;
     pointer-events: none;

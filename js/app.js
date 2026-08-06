@@ -370,6 +370,7 @@ const WidgetApp = {
         this.elements.trackArtist.textContent = 'Play music to see it here';
         this.elements.artwork.src = 'assets/default-artwork.svg';
         this.elements.artwork.style.display = 'block';
+        document.documentElement.style.removeProperty('--dynamic-artwork-url');
         this.elements.progressFill.style.width = '0%';
         this.elements.currentTime.textContent = '0:00';
         this.elements.totalTime.textContent = '0:00';
