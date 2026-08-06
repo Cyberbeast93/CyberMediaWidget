@@ -22,5 +22,5 @@ npm install
 pm2 restart stream-widget
 
 echo "Deploy complete!"
-echo "Widget: http://92.4.155.206:8080/index.html"
-echo "Settings: https://92.4.155.206:8443/settings.html"
+echo "Widget: https://cy8ermedia.duckdns.org/index.html"
+echo "Settings: https://cy8ermedia.duckdns.org/settings.html"

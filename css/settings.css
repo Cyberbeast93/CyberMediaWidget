@@ -183,7 +183,7 @@ body {
 .theme-btn {
     padding: 10px 8px;
     background: #0f0f1a;
-    border: 2px solid #2a2a4a;
+    border: 2px solid var(--theme-color, #2a2a4a);
     border-radius: 8px;
     color: #a0a0a0;
     font-size: 12px;
@@ -198,19 +198,29 @@ body {
 }
 
 .theme-btn.active {
-    border-color: #00e5ff;
-    color: #00e5ff;
+    border-color: var(--theme-color, #00e5ff);
+    color: var(--theme-color, #00e5ff);
     background: rgba(0, 229, 255, 0.1);
 }
 
-.theme-btn[data-theme="dark"] { border-left: 3px solid #e94560; }
-.theme-btn[data-theme="light"] { border-left: 3px solid #6366f1; }
-.theme-btn[data-theme="neon"] { border-left: 3px solid #00ff88; }
-.theme-btn[data-theme="nord"] { border-left: 3px solid #88c0d0; }
-.theme-btn[data-theme="fallout"] { border-left: 3px solid #00ff41; }
-.theme-btn[data-theme="borderlands"] { border-left: 3px solid #ff6600; }
-.theme-btn[data-theme="7days"] { border-left: 3px solid #cc3333; }
-.theme-btn[data-theme="halflife"] { border-left: 3px solid #ff6600; }
+.theme-btn[data-theme="dark"] { --theme-color: #00e5ff; }
+.theme-btn[data-theme="light"] { --theme-color: #6366f1; }
+.theme-btn[data-theme="neon"] { --theme-color: #00ff88; }
+.theme-btn[data-theme="nord"] { --theme-color: #88c0d0; }
+.theme-btn[data-theme="fallout"] { --theme-color: #00ff41; }
+.theme-btn[data-theme="borderlands"] { --theme-color: #ff6600; }
+.theme-btn[data-theme="7days"] { --theme-color: #cc3333; }
+.theme-btn[data-theme="halflife"] { --theme-color: #ff6600; }
+.theme-btn[data-theme="minecraft"] { --theme-color: #5d8c42; }
+.theme-btn[data-theme="cyberpunk"] { --theme-color: #ff00ff; }
+.theme-btn[data-theme="dynamic"] { --theme-color: #00e5ff; }
+.theme-btn[data-theme="dynamic-advanced"] { --theme-color: #00e5ff; }
+
+.theme-btn:hover,
+.theme-btn.active {
+    border-color: var(--theme-color, #00e5ff);
+    color: var(--theme-color, #00e5ff);
+}
 
 .theme-actions {
     display: flex;

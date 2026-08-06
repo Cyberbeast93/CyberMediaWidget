@@ -6,7 +6,7 @@ A customizable OBS stream overlay widget that displays currently playing tracks 
 
 - **Spotify Integration** - Shows currently playing track with album art, artist, and progress bar
 - **YouTube Integration** - Display YouTube video info with thumbnails
-- **8 Gaming Themes** - Dark, Light, Neon, Nord, Fallout, Borderlands, 7 Days to Die, Half-Life
+- **12 Gaming Themes** - Dark, Light, Neon, Nord, Fallout, Borderlands, 7 Days to Die, Half-Life, Minecraft, Cyberpunk, Dynamic, Dynamic Advanced
 - **OBS Ready** - Transparent background, configurable size, works as Browser Source
 - **Keyboard Shortcuts** - Press 'T' to cycle themes, double-click widget to change theme
 - **Web Settings Page** - Easy configuration UI for API keys and themes
@@ -24,6 +24,10 @@ A customizable OBS stream overlay widget that displays currently playing tracks 
 | Borderlands | Cel-shaded orange/yellow |
 | 7 Days to Die | Blood red post-apocalyptic |
 | Half-Life | Lambda orange/grey |
+| Minecraft | Blocky grass-green pixel style |
+| Cyberpunk | Neon pink/cyan glitch style |
+| Dynamic | Album-art color palette |
+| Dynamic Advanced | Album-art palette with blurred background |
 
 ## Quick Start
 
@@ -42,6 +46,8 @@ npm start
 ### 3. Open Settings
 
 Navigate to `http://localhost:8080/settings.html` in your browser.
+
+Production settings: `https://cy8ermedia.duckdns.org/settings.html`
 
 ### 4. Connect Spotify
 
@@ -68,12 +74,12 @@ Copy the generated URL from settings and add as Browser Source in OBS.
 Customize the widget via URL parameters:
 
 ```
-http://your-server:8080/index.html?theme=fallout&user=abc123
+https://cy8ermedia.duckdns.org/index.html?user=abc123
 ```
 
 | Parameter | Options | Description |
 |-----------|---------|-------------|
-| `theme` | dark, light, neon, nord, fallout, borderlands, 7days, halflife | Set theme |
+| `theme` | theme name | Optional preview theme; applied themes are loaded from the user's settings |
 | `user` | user ID | Load that user's Spotify credentials |
 
 ## Project Structure
@@ -133,7 +139,7 @@ pm2 start server.js --name cybermedia-widget
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 2. Create a new app
 3. Add your redirect URI to the app settings:
-   - Production: `https://your-server:8443/callback`
+   - Production: `https://cy8ermedia.duckdns.org/callback`
 4. Copy Client ID and Client Secret to the settings page
 
 ## Troubleshooting

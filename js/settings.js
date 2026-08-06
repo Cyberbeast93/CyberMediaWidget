@@ -168,8 +168,7 @@ const SettingsApp = {
         const clientSecret = this.elements.spotifyClientSecret.value;
         const youtubeKey = this.elements.youtubeApiKey.value;
 
-        const host = window.location.hostname;
-        const redirectUri = `https://${host}:8443/callback`;
+        const redirectUri = new URL('/callback', window.location.origin).toString();
 
         try {
             const response = await fetch(`/api/config/${this.userId}`, {
@@ -230,11 +229,12 @@ const SettingsApp = {
     },
 
     updateObsUrl() {
-        const host = window.location.hostname;
         const params = new URLSearchParams({
             user: this.userId
         });
-        this.elements.obsUrl.value = `http://${host}:8080/index.html?${params.toString()}`;
+        const widgetUrl = new URL('/index.html', window.location.origin);
+        widgetUrl.search = params.toString();
+        this.elements.obsUrl.value = widgetUrl.toString();
     },
 
     copyObsUrl() {
@@ -249,14 +249,15 @@ const SettingsApp = {
     },
 
     refreshPreview() {
-        const host = window.location.hostname;
         const params = new URLSearchParams({
             theme: this.settings.theme,
             preview: '1',
             user: this.userId
         });
-        const src = `https://${host}:8443/index.html?${params.toString()}&_t=${Date.now()}`;
-        this.elements.previewFrame.src = src;
+        params.set('_t', Date.now());
+        const previewUrl = new URL('/index.html', window.location.origin);
+        previewUrl.search = params.toString();
+        this.elements.previewFrame.src = previewUrl.toString();
     },
 
     updateSpotifyStatus(connected) {
