@@ -3,6 +3,7 @@ const WidgetApp = {
     currentTrack: null,
     progressInterval: null,
     themePollInterval: null,
+    titleOverflowFrame: null,
     canvas: null,
     ctx: null,
 
@@ -292,15 +293,22 @@ const WidgetApp = {
     },
 
     bindEvents() {
+        const cycleTheme = () => {
+            ThemeManager.cycleTheme();
+            this.updateTitleOverflow();
+        };
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 't' || e.key === 'T') {
-                ThemeManager.cycleTheme();
+                cycleTheme();
             }
         });
 
         this.elements.widget.addEventListener('dblclick', () => {
-            ThemeManager.cycleTheme();
+            cycleTheme();
         });
+
+        window.addEventListener('resize', () => this.updateTitleOverflow());
     },
 
     updateDisplay(trackData) {
@@ -337,6 +345,7 @@ const WidgetApp = {
     showTrack(track) {
         this.elements.trackTitle.textContent = track.title || 'Unknown Track';
         this.elements.trackArtist.textContent = track.artist || 'Unknown Artist';
+        this.updateTitleOverflow();
 
         if (track.artwork) {
             this.elements.artwork.src = track.artwork;
@@ -365,12 +374,41 @@ const WidgetApp = {
         document.body.classList.toggle('playback-paused', !isPlaying);
     },
 
+    clearTitleOverflow() {
+        if (this.titleOverflowFrame) {
+            cancelAnimationFrame(this.titleOverflowFrame);
+            this.titleOverflowFrame = null;
+        }
+
+        this.elements.trackTitle.classList.remove('is-overflowing');
+        this.elements.trackTitle.style.removeProperty('--title-scroll-distance');
+        this.elements.trackTitle.style.removeProperty('--title-scroll-duration');
+    },
+
+    updateTitleOverflow() {
+        this.clearTitleOverflow();
+
+        this.titleOverflowFrame = requestAnimationFrame(() => {
+            this.titleOverflowFrame = null;
+            const title = this.elements.trackTitle;
+            const overflowDistance = title.scrollWidth - title.clientWidth;
+
+            if (overflowDistance <= 1) return;
+
+            const duration = Math.max(8, Math.min(24, overflowDistance / 18));
+            title.style.setProperty('--title-scroll-distance', `${overflowDistance}px`);
+            title.style.setProperty('--title-scroll-duration', `${duration}s`);
+            title.classList.add('is-overflowing');
+        });
+    },
+
     showIdle() {
         this.elements.trackTitle.textContent = 'No Track Playing';
         this.elements.trackArtist.textContent = 'Play music to see it here';
         this.elements.artwork.src = 'assets/default-artwork.svg';
         this.elements.artwork.style.display = 'block';
         document.documentElement.style.removeProperty('--dynamic-artwork-url');
+        this.clearTitleOverflow();
         this.elements.progressFill.style.width = '0%';
         this.elements.currentTime.textContent = '0:00';
         this.elements.totalTime.textContent = '0:00';
@@ -398,6 +436,7 @@ const WidgetApp = {
 
         this.elements.trackTitle.textContent = 'Configure API Keys';
         this.elements.trackArtist.textContent = 'Open settings.html to setup';
+        this.clearTitleOverflow();
         this.elements.widget.classList.remove('is-playing');
         this.elements.widget.classList.add('is-paused');
         this.elements.widget.classList.add('is-idle');
@@ -456,6 +495,7 @@ const WidgetApp = {
 
     setTheme(theme) {
         ThemeManager.setTheme(theme);
+        this.updateTitleOverflow();
     },
 
     getSource() {
