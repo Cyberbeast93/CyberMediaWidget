@@ -66,8 +66,8 @@ Copy the generated URL from settings and add as Browser Source in OBS.
 1. Open OBS Studio
 2. Add a new **Browser Source**
 3. Set URL to your hosted widget URL (includes `?user=your-id`)
-4. Set width/height to **1200 x 350**
-5. The widget will render at high resolution and scale down cleanly
+4. Set width/height to **1400 x 550**
+5. The widget renders at 1200 x 350 with a 100px buffer on every side for the glow effect
 
 ## URL Parameters
 

@@ -225,6 +225,10 @@ const WidgetApp = {
         if (urlConfig.height) {
             document.documentElement.style.setProperty('--widget-height', urlConfig.height + 'px');
         }
+
+        this.elements.widget.classList.remove('is-playing', 'is-idle');
+        this.elements.widget.classList.toggle('is-paused', !this.isPreview);
+        document.body.classList.toggle('playback-paused', !this.isPreview);
     },
 
     startThemePolling() {
@@ -351,9 +355,9 @@ const WidgetApp = {
         this.elements.totalTime.textContent = '0:00';
         this.elements.playStatus.textContent = '';
         this.elements.widget.classList.remove('is-playing');
-        this.elements.widget.classList.remove('is-paused');
+        this.elements.widget.classList.toggle('is-paused', !this.isPreview);
         this.elements.widget.classList.add('is-idle');
-        document.body.classList.remove('playback-paused');
+        document.body.classList.toggle('playback-paused', !this.isPreview);
         this.stopProgressUpdate();
     },
 
@@ -373,9 +377,10 @@ const WidgetApp = {
 
         this.elements.trackTitle.textContent = 'Configure API Keys';
         this.elements.trackArtist.textContent = 'Open settings.html to setup';
-        this.elements.widget.classList.remove('is-paused');
+        this.elements.widget.classList.remove('is-playing');
+        this.elements.widget.classList.add('is-paused');
         this.elements.widget.classList.add('is-idle');
-        document.body.classList.remove('playback-paused');
+        document.body.classList.add('playback-paused');
     },
 
     updateSourceIcon(source) {
