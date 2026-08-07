@@ -388,7 +388,6 @@ const WidgetApp = {
         }
 
         this.stopMarquee();
-        this.currentTitle = null;
         this.elements.trackTitle.classList.remove('is-overflowing');
     },
 
@@ -476,6 +475,7 @@ const WidgetApp = {
     },
 
     showIdle() {
+        this.currentTitle = null;
         this.elements.trackTitle.textContent = 'No Track Playing';
         this.elements.trackArtist.textContent = 'Play music to see it here';
         this.elements.artwork.src = 'assets/default-artwork.svg';
@@ -507,6 +507,7 @@ const WidgetApp = {
             return;
         }
 
+        this.currentTitle = null;
         this.elements.trackTitle.textContent = 'Configure API Keys';
         this.elements.trackArtist.textContent = 'Open settings.html to setup';
         this.clearTitleOverflow();
