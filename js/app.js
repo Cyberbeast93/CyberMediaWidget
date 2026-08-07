@@ -1,11 +1,12 @@
 const WidgetApp = {
     elements: {},
     currentTrack: null,
+    currentTitle: null,
     progressInterval: null,
     themePollInterval: null,
     titleOverflowFrame: null,
-    canvas: null,
-    ctx: null,
+    measureCanvas: null,
+    marqueeFrame: null,
 
     async init() {
         this.cacheElements();
@@ -343,9 +344,16 @@ const WidgetApp = {
     },
 
     showTrack(track) {
-        this.elements.trackTitle.textContent = track.title || 'Unknown Track';
+        const newTitle = track.title || 'Unknown Track';
+        const titleChanged = newTitle !== this.currentTitle;
+
+        this.elements.trackTitle.textContent = newTitle;
         this.elements.trackArtist.textContent = track.artist || 'Unknown Artist';
-        this.updateTitleOverflow();
+
+        if (titleChanged) {
+            this.currentTitle = newTitle;
+            this.updateTitleOverflow();
+        }
 
         if (track.artwork) {
             this.elements.artwork.src = track.artwork;
@@ -381,9 +389,8 @@ const WidgetApp = {
         }
 
         this.stopMarquee();
+        this.currentTitle = null;
         this.elements.trackTitle.classList.remove('is-overflowing');
-        this.elements.trackTitle.style.removeProperty('--title-scroll-distance');
-        this.elements.trackTitle.style.removeProperty('--title-scroll-duration');
     },
 
     measureTitleWidth(text) {
@@ -400,23 +407,27 @@ const WidgetApp = {
 
         const title = this.elements.trackTitle;
         const speed = 60;
-        const pauseAtEnd = 2000;
-        const totalDuration = (overflowDistance / speed) * 1000 + pauseAtEnd;
+        const pauseMs = 1000;
+        const scrollMs = (overflowDistance / speed) * 1000;
+        const halfCycle = pauseMs + scrollMs;
+        const cycleMs = halfCycle * 2;
         const startTime = performance.now();
 
         const animate = (now) => {
             this.marqueeFrame = requestAnimationFrame(animate);
-            const elapsed = (now - startTime) % totalDuration;
-            const movePhase = totalDuration - pauseAtEnd;
+            const elapsed = (now - startTime) % cycleMs;
             let tx;
 
-            if (elapsed < pauseAtEnd) {
+            if (elapsed < pauseMs) {
                 tx = 0;
-            } else if (elapsed < movePhase + pauseAtEnd) {
-                const t = (elapsed - pauseAtEnd) / movePhase;
+            } else if (elapsed < halfCycle) {
+                const t = (elapsed - pauseMs) / scrollMs;
                 tx = -overflowDistance * t;
+            } else if (elapsed < halfCycle + pauseMs) {
+                tx = -overflowDistance;
             } else {
-                tx = 0;
+                const t = (elapsed - halfCycle - pauseMs) / scrollMs;
+                tx = -overflowDistance * (1 - t);
             }
 
             title.style.transform = `translateX(${tx}px)`;
