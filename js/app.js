@@ -5,7 +5,6 @@ const WidgetApp = {
     progressInterval: null,
     themePollInterval: null,
     titleOverflowFrame: null,
-    measureCanvas: null,
     marqueeFrame: null,
 
     async init() {
@@ -394,12 +393,27 @@ const WidgetApp = {
     },
 
     measureTitleWidth(text) {
-        const cs = getComputedStyle(this.elements.trackTitle);
-        const canvas = this.measureCanvas || (this.measureCanvas = document.createElement('canvas'));
-        const ctx = canvas.getContext('2d');
-        const font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-        ctx.font = font;
-        return ctx.measureText(text).width;
+        const title = this.elements.trackTitle;
+        const cs = getComputedStyle(title);
+        const measurer = document.createElement('span');
+        measurer.style.cssText = [
+            'visibility: hidden',
+            'position: absolute',
+            'white-space: nowrap',
+            'top: -99999px',
+            'left: -99999px'
+        ].join(';');
+        measurer.style.fontSize = cs.fontSize;
+        measurer.style.fontWeight = cs.fontWeight;
+        measurer.style.fontFamily = cs.fontFamily;
+        measurer.style.fontStyle = cs.fontStyle;
+        measurer.style.letterSpacing = cs.letterSpacing;
+        measurer.style.wordSpacing = cs.wordSpacing;
+        measurer.textContent = text;
+        document.body.appendChild(measurer);
+        const width = measurer.offsetWidth;
+        document.body.removeChild(measurer);
+        return width;
     },
 
     startMarquee(overflowDistance) {
@@ -407,27 +421,24 @@ const WidgetApp = {
 
         const title = this.elements.trackTitle;
         const speed = 60;
-        const pauseMs = 1000;
-        const scrollMs = (overflowDistance / speed) * 1000;
-        const halfCycle = pauseMs + scrollMs;
-        const cycleMs = halfCycle * 2;
+        const pauseStart = 1000;
+        const pauseEnd = 2000;
+        const movePhase = (overflowDistance / speed) * 1000;
+        const totalDuration = pauseStart + movePhase + pauseEnd;
         const startTime = performance.now();
 
         const animate = (now) => {
             this.marqueeFrame = requestAnimationFrame(animate);
-            const elapsed = (now - startTime) % cycleMs;
+            const elapsed = (now - startTime) % totalDuration;
             let tx;
 
-            if (elapsed < pauseMs) {
+            if (elapsed < pauseStart) {
                 tx = 0;
-            } else if (elapsed < halfCycle) {
-                const t = (elapsed - pauseMs) / scrollMs;
+            } else if (elapsed < pauseStart + movePhase) {
+                const t = (elapsed - pauseStart) / movePhase;
                 tx = -overflowDistance * t;
-            } else if (elapsed < halfCycle + pauseMs) {
-                tx = -overflowDistance;
             } else {
-                const t = (elapsed - halfCycle - pauseMs) / scrollMs;
-                tx = -overflowDistance * (1 - t);
+                tx = -overflowDistance;
             }
 
             title.style.transform = `translateX(${tx}px)`;
