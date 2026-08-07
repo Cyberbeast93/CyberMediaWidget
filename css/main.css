@@ -66,6 +66,7 @@ body:hover .settings-link {
     background: var(--widget-bg);
     border: 4px solid var(--widget-border);
     box-shadow: none;
+    overflow: hidden;
     transition: opacity 0.5s ease, background var(--transition-speed) ease, border-color var(--transition-speed) ease, transform var(--transition-speed) ease;
     isolation: isolate;
     position: relative;
